@@ -1,0 +1,210 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Projects — Jonas Fernandez</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000;
+      color: #FFFF00;
+      font-family: 'Press Start 2P', monospace;
+      margin: 0;
+      padding: 0;
+      image-rendering: pixelated;
+    }
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-bottom: 3px solid #FF0000;
+      background-color: #111;
+    }
+    h1, h2, h3 {
+      color: #FFFF00;
+      text-shadow: 2px 2px #FF0000;
+    }
+    h1 {
+      font-size: 1.5rem;
+    }
+    h2, h3 {
+      font-size: 1rem;
+    }
+    p {
+      max-width: 800px;
+      margin: 1rem auto;
+      line-height: 1.5;
+      color: #FFFFFF;
+      font-size: 0.8rem;
+    }
+    .section-title {
+      text-align: center;
+      margin-top: 3rem;
+      margin-bottom: 1rem;
+      border-bottom: 3px solid #FF0000;
+      padding-bottom: 0.5rem;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .card {
+      background-color: #111;
+      border: 3px solid #FF0000;
+      border-radius: 0;
+      padding: 1rem;
+      text-align: center;
+      text-decoration: none;
+      color: #FFFF00;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.1);
+      background-color: #222;
+    }
+    .card-title {
+      font-weight: bold;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+    }
+    nav {
+      text-align: center;
+      padding: 1rem;
+      background-color: #111;
+      border-bottom: 3px solid #FF0000;
+    }
+    nav a {
+      color: #FFFF00;
+      margin: 0 1rem;
+      text-decoration: none;
+      font-size: 0.8rem;
+      text-shadow: 1px 1px #FF0000;
+    }
+    nav a:hover {
+      color: #FFFFFF;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 3px solid #FF0000;
+      margin-top: 2rem;
+      color: #FFFFFF;
+      font-size: 0.7rem;
+    }
+    a {
+      color: #FFFF00;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="projects.html">Projects</a>
+    <a href="cv.html">CV</a>
+    <a href="certs.html">Certifications</a>
+    <a href="youtube.html">YouTube</a>
+  </nav>
+  <header>
+    <h1>Projects</h1>
+  </header>
+  <h2 class="section-title">Hack The Box Reports</h2>
+  <p>Below are my Hack The Box reports, showcasing my pentesting work. Visit my <a href="https://github.com/jonas-fernandez-as/Pentesting" target="_blank">GitHub</a> for additional projects and code.</p>
+  <h3 class="section-title">Starting Point Machines</h3>
+  <div class="grid-container">
+    <a href="REPORTS/Starting Point/Appointment.pdf" class="card" target="_blank"><div class="card-title">Appointment</div></a>
+    <a href="REPORTS/Starting Point/Archetype.pdf" class="card" target="_blank"><div class="card-title">Archetype</div></a>
+    <a href="REPORTS/Starting Point/Base.pdf" class="card" target="_blank"><div class="card-title">Base</div></a>
+    <a href="REPORTS/Starting Point/Crocodile.pdf" class="card" target="_blank"><div class="card-title">Crocodile</div></a>
+    <a href="REPORTS/Starting Point/Dancing.pdf" class="card" target="_blank"><div class="card-title">Dancing</div></a>
+    <a href="REPORTS/Starting Point/Explosion.pdf" class="card" target="_blank"><div class="card-title">Explosion</div></a>
+    <a href="REPORTS/Starting Point/Fawn.pdf" class="card" target="_blank"><div class="card-title">Fawn</div></a>
+    <a href="REPORTS/Starting Point/Funnel.pdf" class="card" target="_blank"><div class="card-title">Funnel</div></a>
+    <a href="REPORTS/Starting Point/Ignition.pdf" class="card" target="_blank"><div class="card-title">Ignition</div></a>
+    <a href="REPORTS/Starting Point/Included.pdf" class="card" target="_blank"><div class="card-title">Included</div></a>
+    <a href="REPORTS/Starting Point/Markup.pdf" class="card" target="_blank"><div class="card-title">Markup</div></a>
+    <a href="REPORTS/Starting Point/Mongod.pdf" class="card" target="_blank"><div class="card-title">Mongod</div></a>
+    <a href="REPORTS/Starting Point/Oopsie.pdf" class="card" target="_blank"><div class="card-title">Oopsie</div></a>
+    <a href="REPORTS/Starting Point/Pennyworth.pdf" class="card" target="_blank"><div class="card-title">Pennyworth</div></a>
+    <a href="REPORTS/Starting Point/Preignition.pdf" class="card" target="_blank"><div class="card-title">Preignition</div></a>
+    <a href="REPORTS/Starting Point/REPORT MEOW HTB.pdf" class="card" target="_blank"><div class="card-title">Meow</div></a>
+    <a href="REPORTS/Starting Point/Redeemereport.pdf" class="card" target="_blank"><div class="card-title">Redeemer</div></a>
+    <a href="REPORTS/Starting Point/Responder.pdf" class="card" target="_blank"><div class="card-title">Responder</div></a>
+    <a href="REPORTS/Starting Point/Squel.pdf" class="card" target="_blank"><div class="card-title">Squel</div></a>
+    <a href="REPORTS/Starting Point/Synced.pdf" class="card" target="_blank"><div class="card-title">Synced</div></a>
+    <a href="REPORTS/Starting Point/Tactics.pdf" class="card" target="_blank"><div class="card-title">Tactics</div></a>
+    <a href="REPORTS/Starting Point/Three.pdf" class="card" target="_blank"><div class="card-title">Three</div></a>
+    <a href="REPORTS/Starting Point/Unified.pdf" class="card" target="_blank"><div class="card-title">Unified</div></a>
+    <a href="REPORTS/Starting Point/Vaccine.pdf" class="card" target="_blank"><div class="card-title">Vaccine</div></a>
+  </div>
+  <h3 class="section-title">Easy Machines</h3>
+  <div class="grid-container">
+    <a href="REPORTS/Easy/BoardLight.pdf" class="card" target="_blank"><div class="card-title">BoardLight</div></a>
+    <a href="REPORTS/Easy/Cicada.pdf" class="card" target="_blank"><div class="card-title">Cicada</div></a>
+    <a href="REPORTS/Easy/Devvortex.pdf" class="card" target="_blank"><div class="card-title">Devvortex</div></a>
+    <a href="REPORTS/Easy/Driver.pdf" class="card" target="_blank"><div class="card-title">Driver</div></a>
+    <a href="REPORTS/Easy/GoodGames.pdf" class="card" target="_blank"><div class="card-title">GoodGames</div></a>
+    <a href="REPORTS/Easy/Jerry.pdf" class="card" target="_blank"><div class="card-title">Jerry</div></a>
+    <a href="REPORTS/Easy/MetaTwo Report.pdf" class="card" target="_blank"><div class="card-title">MetaTwo</div></a>
+    <a href="REPORTS/Easy/Pandora Report.pdf" class="card" target="_blank"><div class="card-title">Pandora</div></a>
+    <a href="REPORTS/Easy/Paper.pdf" class="card" target="_blank"><div class="card-title">Paper</div></a>
+    <a href="REPORTS/Easy/Sauna.pdf" class="card" target="_blank"><div class="card-title">Sauna</div></a>
+    <a href="REPORTS/Easy/Sau.pdf" class="card" target="_blank"><div class="card-title">Sau</div></a>
+    <a href="REPORTS/Easy/SteamCloud.pdf" class="card" target="_blank"><div class="card-title">SteamCloud</div></a>
+    <a href="REPORTS/Easy/Support.pdf" class="card" target="_blank"><div class="card-title">Support</div></a>
+    <a href="REPORTS/Easy/TwoMillion.pdf" class="card" target="_blank"><div class="card-title">TwoMillion</div></a>
+    <a href="REPORTS/Easy/VulnEscape Report.pdf" class="card" target="_blank"><div class="card-title">VulnEscape</div></a>
+    <a href="REPORTS/Easy/Writeup.pdf" class="card" target="_blank"><div class="card-title">Writeup</div></a>
+  </div>
+  <h3 class="section-title">Medium Machines</h3>
+  <div class="grid-container">
+    <a href="REPORTS/Medium/Administrator.pdf" class="card" target="_blank"><div class="card-title">Administrator</div></a>
+    <a href="REPORTS/Medium/Builder Report.pdf" class="card" target="_blank"><div class="card-title">Builder</div></a>
+    <a href="REPORTS/Medium/Certified.pdf" class="card" target="_blank"><div class="card-title">Certified</div></a>
+  </div>
+  <footer>
+    © 2025 Jonas Fernandez — All rights reserved.
+  </footer>
+</body>
+</html>
