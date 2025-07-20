@@ -11,23 +11,15 @@
                 var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
                 var firstSheetName = workbook.SheetNames[0];
                 var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
                 var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
                 var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
                 var headerRowIndex = filteredData.findIndex((row, index) =>
                   row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
                 );
-                // Fallback
                 if (headerRowIndex === -1 || headerRowIndex > 25) {
                   headerRowIndex = 0;
                 }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
                 csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
                 return csv;
             } catch (e) {
@@ -136,7 +128,7 @@
     a {
       color: #FFFF00;
     }
-      .hero-image {
+    .hero-image {
       display: block;
       margin: 0 auto;
       max-width: 800px;
@@ -154,11 +146,10 @@
     <a href="youtube.html">YouTube</a>
   </nav>
   <header>
-
     <img src="images/hero-certs.png" alt="Hero Image" class="hero-image">
     <h1>Certifications</h1>
   </header>
-  <p>My earned certifications and badges from Cisco and Hack The Box:</p>
+  <p>My earned certifications and badges from Cisco, Hack The Box, and Forage:</p>
   <h2 class="section-title">Cisco Certifications</h2>
   <div class="grid-container">
     <a href="https://drive.google.com/file/d/1_79lC0bSY4D7s8xL8RCpqUFxkPUQCE3T/view?pli=1" class="card" target="_blank">
@@ -277,6 +268,21 @@
     </a>
     <a href="https://academy.hackthebox.com/achievement/915489/163" class="card" target="_blank">
       <div class="card-title">Attacking Enterprise Networks</div>
+    </a>
+  </div>
+  <h2 class="section-title">Forage Certifications</h2>
+  <div class="grid-container">
+    <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/9PBTqmSxAf6zZTseP/E9pA6qsdbeyEkp3ti_9PBTqmSxAf6zZTseP_hZL26pyxygiif83Qh_1753014377241_completion_certificate.pdf" class="card" target="_blank">
+      <div class="card-title">Deloitte Australia - Cyber Job Simulation</div>
+    </a>
+    <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/mfxGwGDp6WkQmtmTf/vcKAB5yYAgvemepGQ_mfxGwGDp6WkQmtmTf_hZL26pyxygiif83Qh_1753014377132_completion_certificate.pdf" class="card" target="_blank">
+      <div class="card-title">Mastercard - Cybersecurity Job Simulation</div>
+    </a>
+    <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/ifobHAoMjQs9s6bKS/gmf3ypEXBj2wvfQWC_ifobHAoMjQs9s6bKS_hZL26pyxygiif83Qh_1753025845869_completion_certificate.pdf" class="card" target="_blank">
+      <div class="card-title">Tata - Cybersecurity Analyst Job Simulation</div>
+    </a>
+    <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/M6JGAwZ52SMusMEcK/RNhbu8QnDzthwynEf_M6JGAwZ52SMusMEcK_hZL26pyxygiif83Qh_1753028983436_completion_certificate.pdf" class="card" target="_blank">
+      <div class="card-title">Telstra AU - Cybersecurity Job Simulation</div>
     </a>
   </div>
   <footer>
