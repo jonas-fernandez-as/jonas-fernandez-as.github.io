@@ -1,143 +1,515 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>YouTube — Jonas Fernandez</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
-      background-color: #000;
-      color: #FFFF00;
-      font-family: 'Press Start 2P', monospace;
+    :root {
+      --ubuntu-dark: #2C001E;
+      --ubuntu-orange: #E95420;
+      --ubuntu-light: #F5F5F5;
+      --ubuntu-gray: #333333;
+      --ubuntu-blue: #0D6EFD;
+      --terminal-bg: #300A24;
+      --terminal-text: #F0F0F0;
+      --terminal-green: #4AF626;
+      --terminal-yellow: #FFD700;
+      --terminal-cyan: #00FFFF;
+    }
+    
+    * {
       margin: 0;
       padding: 0;
-      image-rendering: pixelated;
+      box-sizing: border-box;
     }
-    header {
-      text-align: center;
-      padding: 2rem 1rem;
-      border-bottom: 3px solid #FF0000;
-      background-color: #111;
+    
+    body {
+      background: linear-gradient(135deg, var(--ubuntu-dark) 0%, #1a0a14 100%);
+      color: var(--terminal-text);
+      font-family: 'Ubuntu Mono', monospace;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0;
+      margin: 0;
     }
-    h1 {
-      color: #FFFF00;
-      font-size: 1.5rem;
-      text-shadow: 2px 2px #FF0000;
+    
+    /* TERMINAL PRINCIPAL (CONTENEDOR) */
+    .main-terminal {
+      max-width: 1200px;
+      margin: 30px auto;
+      background: var(--terminal-bg);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
     }
-    p {
-      max-width: 800px;
-      margin: 1rem auto;
-      line-height: 1.5;
-      color: #FFFFFF;
-      font-size: 0.8rem;
+    
+    .main-terminal-bar {
+      background: linear-gradient(to right, #333, #444);
+      height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
     }
+    
+    .terminal-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .terminal-button {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    
+    .close { background: #FF5F56; }
+    .minimize { background: #FFBD2E; }
+    .maximize { background: #27CA3F; }
+    
+    .main-terminal-body {
+      padding: 30px;
+    }
+    
+    /* NAVEGACIÓN */
     nav {
-      text-align: center;
-      padding: 1rem;
-      background-color: #111;
-      border-bottom: 3px solid #FF0000;
+      display: flex;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      margin-bottom: 30px;
+      border-radius: 5px;
+      flex-wrap: wrap;
     }
+    
     nav a {
-      color: #FFFF00;
-      margin: 0 1rem;
+      color: var(--terminal-cyan);
       text-decoration: none;
-      font-size: 0.8rem;
-      text-shadow: 1px 1px #FF0000;
+      margin: 0 15px;
+      padding: 8px 15px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      position: relative;
     }
+    
     nav a:hover {
-      color: #FFFFFF;
+      background: rgba(233, 84, 32, 0.2);
+      color: var(--terminal-yellow);
     }
+    
+    nav a::after {
+      content: '>';
+      position: absolute;
+      right: -10px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    nav a:hover::after {
+      opacity: 1;
+    }
+    
+    /* TÍTULOS */
+    h1, h2, h3 {
+      font-family: 'Ubuntu', sans-serif;
+      font-weight: 500;
+    }
+    
+    h1 {
+      color: var(--terminal-yellow);
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      position: relative;
+      display: inline-block;
+    }
+    
+    h1::after {
+      content: '_';
+      animation: blink 1s infinite;
+    }
+    
+    /* VENTANAS DE TERMINAL INDIVIDUALES */
+    .terminal-window {
+      background: rgba(40, 10, 30, 0.8);
+      border-radius: 8px;
+      margin: 30px 0;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      border: 1px solid rgba(233, 84, 32, 0.1);
+    }
+    
+    .window-bar {
+      background: linear-gradient(to right, #3a3a3a, #4a4a4a);
+      height: 28px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    }
+    
+    .window-title {
+      color: #ddd;
+      font-size: 0.85rem;
+      margin-left: 10px;
+      flex-grow: 1;
+    }
+    
+    .window-body {
+      padding: 20px;
+    }
+    
+    /* ESTILOS MEJORADOS PARA EL TERMINAL */
+    .terminal-line {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      font-family: 'Ubuntu Mono', monospace;
+    }
+    
+    .terminal-prefix {
+      color: var(--terminal-green);
+      white-space: nowrap;
+      margin-right: 8px;
+      user-select: none;
+      min-width: 40px;
+    }
+    
+    .terminal-command {
+      color: var(--terminal-text);
+      flex-grow: 1;
+    }
+    
+    .terminal-output {
+      color: var(--terminal-cyan);
+      margin-left: 48px;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+    
+    .terminal-prompt {
+      color: var(--terminal-yellow);
+      margin-bottom: 15px;
+      font-family: 'Ubuntu Mono', monospace;
+      display: flex;
+      align-items: center;
+    }
+    
+    .terminal-prompt::before {
+      content: "┌──(";
+      color: var(--terminal-cyan);
+      margin-right: 2px;
+    }
+    
+    .terminal-prompt::after {
+      content: ")-[~]";
+      color: var(--terminal-cyan);
+      margin-left: 2px;
+    }
+    
+    /* CONTENIDO VIDEO */
+    .hero-image {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(233, 84, 32, 0.2);
+    }
+    
     .video-container {
       max-width: 800px;
-      margin: 2rem auto;
-      text-align: center;
+      margin: 25px auto;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(233, 84, 32, 0.3);
     }
+    
     .video-container iframe {
       width: 100%;
       height: 450px;
-      border: 3px solid #FF0000;
-    }
-    footer {
-      text-align: center;
-      padding: 2rem;
-      border-top: 3px solid #FF0000;
-      margin-top: 2rem;
-      color: #FFFFFF;
-      font-size: 0.7rem;
-    }
-    a {
-      color: #FFFF00;
-    }
-    .hero-image {
+      border: none;
       display: block;
-      margin: 0 auto;
-      max-width: 800px;
-      height: auto;
-      border: 3px solid #FF0000;
     }
-
+    
+    /* TARJETAS DE ENLACES */
+    .youtube-link {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(233, 84, 32, 0.2);
+      color: var(--terminal-cyan);
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(233, 84, 32, 0.3);
+    }
+    
+    .youtube-link:hover {
+      background: rgba(233, 84, 32, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(233, 84, 32, 0.2);
+    }
+    
+    .youtube-link i {
+      font-size: 1.5rem;
+      margin-right: 10px;
+      color: #FF0000;
+    }
+    
+    .youtube-link span {
+      font-weight: 500;
+      font-size: 1rem;
+    }
+    
+    /* FOOTER */
+    footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+    }
+    
+    /* EFECTOS DE ANIMACIÓN */
+    .typewriter {
+      overflow: hidden;
+      white-space: nowrap;
+      animation: typing 3.5s steps(40, end);
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+    
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .main-terminal-body {
+        padding: 20px;
+      }
+      
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      nav a {
+        margin: 5px 0;
+        width: 100%;
+        text-align: center;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .terminal-line {
+        flex-direction: column;
+      }
+      
+      .terminal-output {
+        margin-left: 30px;
+      }
+      
+      .video-container iframe {
+        height: 250px;
+      }
+      
+      .youtube-link {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="projects.html">Projects</a>
-    <a href="cv.html">CV</a>
-    <a href="certs.html">Certifications</a>
-    <a href="youtube.html">YouTube</a>
-  </nav>
-  <header>
-    <img src="images/Banner.png" alt="Hero Image" class="hero-image">
-    <h1>YouTube Channel</h1>
-  </header>
-  <p>Check out my YouTube channel for cybersecurity tutorials and Hack The Box walkthroughs:</p>
-  <div class="video-container">
-    <iframe src="https://www.youtube.com/embed/206dEuHEGws" frameborder="0" allow="encrypted-media; fullscreen" allowfullscreen></iframe>
+  <!-- TERMINAL PRINCIPAL -->
+  <div class="main-terminal">
+    <!-- BARRA SUPERIOR DEL TERMINAL PRINCIPAL -->
+    <div class="main-terminal-bar">
+      <div class="terminal-buttons">
+        <div class="terminal-button close"></div>
+        <div class="terminal-button minimize"></div>
+        <div class="terminal-button maximize"></div>
+      </div>
+      <div style="margin-left: 15px; color: #aaa; font-size: 0.9rem;">
+        jonas@portfolio: ~/youtube
+      </div>
+    </div>
+    
+    <!-- CUERPO DEL TERMINAL PRINCIPAL -->
+    <div class="main-terminal-body">
+      <nav>
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="projects.html"><i class="fas fa-code"></i> Projects</a>
+        <a href="cv.html"><i class="fas fa-file-alt"></i> CV</a>
+        <a href="certs.html"><i class="fas fa-certificate"></i> Certifications</a>
+        <a href="youtube.html"><i class="fab fa-youtube"></i> YouTube</a>
+      </nav>
+      
+      <!-- VENTANA DE TERMINAL: ENCABEZADO -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">youtube_channel.sh</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">youtube --channel=JonaStrikeX --info</span>
+          </div>
+          
+          <div class="terminal-output typewriter">
+            <strong>Loading YouTube channel information...</strong>
+          </div>
+          
+          <img src="images/Banner.png" alt="YouTube Banner" class="hero-image">
+          
+          <h1>YouTube Channel</h1>
+          
+          <div class="terminal-prompt" style="margin-top: 20px;">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">echo "Cybersecurity tutorials and Hack The Box walkthroughs"</span>
+          </div>
+          <div class="terminal-output">
+            Cybersecurity tutorials and Hack The Box walkthroughs
+          </div>
+        </div>
+      </div>
+      
+      <!-- VENTANA DE TERMINAL: VIDEO Y ENLACES -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">video_player.sh</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">play --video=latest --embed</span>
+          </div>
+          
+          <div class="terminal-output">
+            Loading latest video from JonaStrikeX channel...
+          </div>
+          
+          <div class="video-container">
+            <!-- VIDEO FIXED: Atributos allow corregidos -->
+            <iframe 
+                src="https://www.youtube.com/embed/206dEuHEGws" 
+                title="Latest video from JonaStrikeX" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allowfullscreen>
+            </iframe>
+          </div>
+          
+          <div style="text-align: center; margin-top: 25px;">
+            <a href="https://www.youtube.com/@JonaStrikeX" class="youtube-link" target="_blank">
+              <i class="fab fa-youtube"></i>
+              <span>Visit JonaStrikeX Channel</span>
+            </a>
+          </div>
+          
+          <div class="terminal-prompt" style="margin-top: 25px;">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">echo "Video loaded successfully. Subscribe for more content!"</span>
+          </div>
+          <div class="terminal-output">
+            Video loaded successfully. Subscribe for more content!
+          </div>
+        </div>
+      </div>
+      
+      <!-- VENTANA DE TERMINAL: FOOTER -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">session_log.txt</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">exit</span>
+          </div>
+          <div class="terminal-output">
+            Session terminated. Connection closed.
+          </div>
+          <div style="text-align: center; margin-top: 15px; color: #aaa;">
+            © 2025 Jonas Fernandez — Cybersecurity Portfolio v2.0
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <p>
-    Visit my channel: <a href="https://www.youtube.com/@JonaStrikeX" target="_blank">JonaStrikeX</a>
-  </p>
-  <footer>
-    © 2025 Jonas Fernandez — All rights reserved.
-  </footer>
+  
+  <script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+    if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+            var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+            var firstSheetName = workbook.SheetNames[0];
+            var worksheet = workbook.Sheets[firstSheetName];
+
+            // Convert sheet to JSON to filter blank rows
+            var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+            // Filter out blank rows (rows where all cells are empty, null, or undefined)
+            var filteredData = jsonData.filter(row => row.some(filledCell));
+
+            // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+            var headerRowIndex = filteredData.findIndex((row, index) =>
+              row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+            );
+            // Fallback
+            if (headerRowIndex === -1 || headerRowIndex > 25) {
+              headerRowIndex = 0;
+            }
+
+            // Convert filtered JSON back to CSV
+            var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+            csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+            return csv;
+        } catch (e) {
+            console.error(e);
+            return "";
+        }
+    }
+    return gk_fileData[filename] || "";
+    }
+  </script>
 </body>
 </html>

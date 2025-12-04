@@ -3,265 +3,951 @@
 <head>
   <meta charset="UTF-8" />
   <title>Certifications — Jonas Fernandez</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
-      background-color: #000;
-      color: #FFFF00;
-      font-family: 'Press Start 2P', monospace;
+    :root {
+      --ubuntu-dark: #2C001E;
+      --ubuntu-orange: #E95420;
+      --ubuntu-light: #F5F5F5;
+      --ubuntu-gray: #333333;
+      --ubuntu-blue: #0D6EFD;
+      --terminal-bg: #300A24;
+      --terminal-text: #F0F0F0;
+      --terminal-green: #4AF626;
+      --terminal-yellow: #FFD700;
+      --terminal-cyan: #00FFFF;
+    }
+    
+    * {
       margin: 0;
       padding: 0;
-      image-rendering: pixelated;
+      box-sizing: border-box;
     }
-    header {
-      text-align: center;
-      padding: 2rem 1rem;
-      border-bottom: 3px solid #FF0000;
-      background-color: #111;
+    
+    body {
+      background: linear-gradient(135deg, var(--ubuntu-dark) 0%, #1a0a14 100%);
+      color: var(--terminal-text);
+      font-family: 'Ubuntu Mono', monospace;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0;
+      margin: 0;
     }
-    h1, h2 {
-      color: #FFFF00;
-      text-shadow: 2px 2px #FF0000;
-    }
-    h1 {
-      font-size: 1.5rem;
-    }
-    h2 {
-      font-size: 1rem;
-    }
-    p {
-      max-width: 800px;
-      margin: 1rem auto;
-      line-height: 1.5;
-      color: #FFFFFF;
-      font-size: 0.8rem;
-    }
-    nav {
-      text-align: center;
-      padding: 1rem;
-      background-color: #111;
-      border-bottom: 3px solid #FF0000;
-    }
-    nav a {
-      color: #FFFF00;
-      margin: 0 1rem;
-      text-decoration: none;
-      font-size: 0.8rem;
-      text-shadow: 1px 1px #FF0000;
-    }
-    nav a:hover {
-      color: #FFFFFF;
-    }
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-      padding: 2rem;
+    
+    /* TERMINAL PRINCIPAL (CONTENEDOR) */
+    .main-terminal {
       max-width: 1200px;
-      margin: auto;
+      margin: 30px auto;
+      background: var(--terminal-bg);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
     }
-    .card {
-      background-color: #111;
-      border: 3px solid #FF0000;
-      border-radius: 0;
-      padding: 1rem;
-      text-align: center;
+    
+    .main-terminal-bar {
+      background: linear-gradient(to right, #333, #444);
+      height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+    
+    .terminal-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .terminal-button {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    
+    .close { background: #FF5F56; }
+    .minimize { background: #FFBD2E; }
+    .maximize { background: #27CA3F; }
+    
+    .main-terminal-body {
+      padding: 30px;
+    }
+    
+    /* NAVEGACIÓN */
+    nav {
+      display: flex;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      margin-bottom: 30px;
+      border-radius: 5px;
+      flex-wrap: wrap;
+    }
+    
+    nav a {
+      color: var(--terminal-cyan);
       text-decoration: none;
-      color: #FFFF00;
-      transition: transform 0.2s;
+      margin: 0 15px;
+      padding: 8px 15px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      position: relative;
     }
-    .card:hover {
-      transform: scale(1.1);
-      background-color: #222;
+    
+    nav a:hover {
+      background: rgba(233, 84, 32, 0.2);
+      color: var(--terminal-yellow);
     }
-    .card-title {
-      font-weight: bold;
-      margin-top: 0.5rem;
-      font-size: 0.8rem;
+    
+    nav a::after {
+      content: '>';
+      position: absolute;
+      right: -10px;
+      opacity: 0;
+      transition: opacity 0.3s;
     }
-    .section-title {
-      text-align: center;
-      margin-top: 3rem;
-      margin-bottom: 1rem;
-      border-bottom: 3px solid #FF0000;
-      padding-bottom: 0.5rem;
+    
+    nav a:hover::after {
+      opacity: 1;
     }
-    footer {
-      text-align: center;
-      padding: 2rem;
-      border-top: 3px solid #FF0000;
-      margin-top: 2rem;
-      color: #FFFFFF;
-      font-size: 0.7rem;
+    
+    /* TÍTULOS */
+    h1, h2, h3 {
+      font-family: 'Ubuntu', sans-serif;
+      font-weight: 500;
     }
-    a {
-      color: #FFFF00;
+    
+    h1 {
+      color: var(--terminal-yellow);
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      position: relative;
+      display: inline-block;
     }
+    
+    h1::after {
+      content: '_';
+      animation: blink 1s infinite;
+    }
+    
+    /* VENTANAS DE TERMINAL INDIVIDUALES */
+    .terminal-window {
+      background: rgba(40, 10, 30, 0.8);
+      border-radius: 8px;
+      margin: 30px 0;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      border: 1px solid rgba(233, 84, 32, 0.1);
+    }
+    
+    .window-bar {
+      background: linear-gradient(to right, #3a3a3a, #4a4a4a);
+      height: 28px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    }
+    
+    .window-title {
+      color: #ddd;
+      font-size: 0.85rem;
+      margin-left: 10px;
+      flex-grow: 1;
+    }
+    
+    .window-body {
+      padding: 20px;
+    }
+    
+    /* ESTILOS MEJORADOS PARA EL TERMINAL */
+    .terminal-line {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      font-family: 'Ubuntu Mono', monospace;
+    }
+    
+    .terminal-prefix {
+      color: var(--terminal-green);
+      white-space: nowrap;
+      margin-right: 8px;
+      user-select: none;
+      min-width: 40px;
+    }
+    
+    .terminal-command {
+      color: var(--terminal-text);
+      flex-grow: 1;
+    }
+    
+    .terminal-output {
+      color: var(--terminal-cyan);
+      margin-left: 48px;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+    
+    .terminal-prompt {
+      color: var(--terminal-yellow);
+      margin-bottom: 15px;
+      font-family: 'Ubuntu Mono', monospace;
+      display: flex;
+      align-items: center;
+    }
+    
+    .terminal-prompt::before {
+      content: "┌──(";
+      color: var(--terminal-cyan);
+      margin-right: 2px;
+    }
+    
+    .terminal-prompt::after {
+      content: ")-[~]";
+      color: var(--terminal-cyan);
+      margin-left: 2px;
+    }
+    
+    /* CONTENIDO CERTIFICACIONES */
     .hero-image {
-      display: block;
-      margin: 0 auto;
-      max-width: 800px;
-      height: auto;
-      border: 3px solid #FF0000;
+      width: 100%;
+      max-height: 400px;
+       object-position: center 50%;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(233, 84, 32, 0.2);
+    }
+    
+    /* GRID DE CERTIFICACIONES */
+    .certs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .cert-card {
+      background: rgba(48, 10, 36, 0.7);
+      border: 1px solid rgba(233, 84, 32, 0.3);
+      border-radius: 6px;
+      padding: 20px;
+      text-decoration: none;
+      color: var(--terminal-text);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+    }
+    
+    .cert-card:hover {
+      border-color: var(--ubuntu-orange);
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(233, 84, 32, 0.2);
+    }
+    
+    .cert-card:hover::before {
+      content: "▶";
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--terminal-green);
+      font-size: 1.2rem;
+    }
+    
+    .cert-card i {
+      font-size: 2rem;
+      color: var(--ubuntu-orange);
+      margin-bottom: 10px;
+    }
+    
+    .cert-card-title {
+      color: var(--terminal-yellow);
+      font-size: 1rem;
+      margin-bottom: 5px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+    
+    .cert-card-description {
+      color: #aaa;
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+    
+    .cert-card-badge {
+      display: inline-block;
+      background: rgba(233, 84, 32, 0.2);
+      color: var(--terminal-cyan);
+      padding: 3px 10px;
+      border-radius: 15px;
+      font-size: 0.75rem;
+      margin-top: 5px;
+    }
+    
+    /* CATEGORÍAS */
+    .category-section {
+      margin-bottom: 40px;
+    }
+    
+    .category-title {
+      color: var(--terminal-yellow);
+      font-size: 1.5rem;
+      margin: 25px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--ubuntu-orange);
+    }
+    
+    /* FOOTER */
+    footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+    }
+    
+    /* EFECTOS DE ANIMACIÓN */
+    .typewriter {
+      overflow: hidden;
+      white-space: nowrap;
+      animation: typing 3.5s steps(40, end);
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+    
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .main-terminal-body {
+        padding: 20px;
+      }
+      
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      nav a {
+        margin: 5px 0;
+        width: 100%;
+        text-align: center;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .certs-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .terminal-line {
+        flex-direction: column;
+      }
+      
+      .terminal-output {
+        margin-left: 30px;
+      }
+      
+      .cert-card {
+        padding: 15px;
+      }
     }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="projects.html">Projects</a>
-    <a href="cv.html">CV</a>
-    <a href="certs.html">Certifications</a>
-    <a href="youtube.html">YouTube</a>
-  </nav>
-  <header>
-    <img src="images/hero-certs.png" alt="Hero Image" class="hero-image">
-    <h1>Certifications</h1>
-  </header>
-  <p>My earned certifications and badges:</p>
-  <h2 class="section-title">Pentest Certifications</h2>
-  <div class="grid-container">
-    <a href="https://certs.ine.com/601e2c30-69ba-4751-8a72-3d856b036ff0" class="card" target="_blank">
-      <div class="card-title">INE eJPTv2</div>
-    </a>
+  <!-- TERMINAL PRINCIPAL -->
+  <div class="main-terminal">
+    <!-- BARRA SUPERIOR DEL TERMINAL PRINCIPAL -->
+    <div class="main-terminal-bar">
+      <div class="terminal-buttons">
+        <div class="terminal-button close"></div>
+        <div class="terminal-button minimize"></div>
+        <div class="terminal-button maximize"></div>
+      </div>
+      <div style="margin-left: 15px; color: #aaa; font-size: 0.9rem;">
+        jonas@portfolio: ~/certs
+      </div>
+    </div>
+    
+    <!-- CUERPO DEL TERMINAL PRINCIPAL -->
+    <div class="main-terminal-body">
+      <nav>
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="projects.html"><i class="fas fa-code"></i> Projects</a>
+        <a href="cv.html"><i class="fas fa-file-alt"></i> CV</a>
+        <a href="certs.html"><i class="fas fa-certificate"></i> Certifications</a>
+        <a href="youtube.html"><i class="fab fa-youtube"></i> YouTube</a>
+      </nav>
+      
+      <!-- VENTANA DE TERMINAL: ENCABEZADO -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">list_certifications.sh</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">ls -la certifications/</span>
+          </div>
+          
+          <div class="terminal-output typewriter">
+            <strong>Loading certifications and badges...</strong>
+          </div>
+          
+          <img src="images/hero-certs.png" alt="Certifications Hero Image" class="hero-image">
+          
+          <h1>Certifications & Badges</h1>
+          
+          <div class="terminal-prompt" style="margin-top: 20px;">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">echo "Validated skills and professional achievements"</span>
+          </div>
+          <div class="terminal-output">
+            Validated skills and professional achievements
+          </div>
+        </div>
+      </div>
+      
+      <!-- VENTANA DE TERMINAL: PENTEST CERTIFICATIONS -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">pentest_certs.sh</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">show_certs --category=pentest</span>
+          </div>
+          
+          <div class="terminal-output">
+            Displaying penetration testing certifications...
+          </div>
+          
+          <div class="category-section">
+            <h2 class="category-title">Pentest Certifications</h2>
+            <div class="certs-grid">
+              <a href="https://certs.ine.com/601e2c30-69ba-4751-8a72-3d856b036ff0" class="cert-card" target="_blank">
+                <i class="fas fa-shield-alt"></i>
+                <div class="cert-card-title">eJPTv2 Certification</div>
+                <div class="cert-card-description">INE / eLearnSecurity Junior Penetration Tester v2</div>
+                <div class="cert-card-badge">Professional</div>
+              </a>
+            </div>
+          </div>
+          
+          <div class="terminal-prompt" style="margin-top: 20px;">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">echo "Pentest certification loaded successfully!"</span>
+          </div>
+          <div class="terminal-output">
+            Pentest certification loaded successfully!
+          </div>
+        </div>
+      </div>
+      
+      <!-- VENTANA DE TERMINAL: CISCO CERTIFICATIONS -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">cisco_certs.sh</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">show_certs --category=cisco</span>
+          </div>
+          
+          <div class="terminal-output">
+            Displaying Cisco Networking Academy certifications...
+          </div>
+          
+          <div class="category-section">
+            <h2 class="category-title">Cisco Certifications</h2>
+            <div class="certs-grid">
+              <a href="https://drive.google.com/file/d/1_79lC0bSY4D7s8xL8RCpqUFxkPUQCE3T/view?pli=1" class="cert-card" target="_blank">
+                <i class="fas fa-lock"></i>
+                <div class="cert-card-title">Introduction to Cybersecurity</div>
+                <div class="cert-card-description">Cisco Networking Academy</div>
+                <div class="cert-card-badge">Fundamental</div>
+              </a>
+              
+              <a href="https://drive.google.com/file/d/1rb5BpZF_b-BUh0GpKgjghHHIXteaBAA-/view" class="cert-card" target="_blank">
+                <i class="fas fa-network-wired"></i>
+                <div class="cert-card-title">Networking and Addressing Troubleshooting</div>
+                <div class="cert-card-description">Cisco Networking Academy</div>
+                <div class="cert-card-badge">Intermediate</div>
+              </a>
+              
+              <a href="https://drive.google.com/file/d/1hgiQtpD0aIqecOoEZ6vH8HymUAZTIfZT/view" class="cert-card" target="_blank">
+                <i class="fas fa-server"></i>
+                <div class="cert-card-title">Networking Devices and Initial Configuration</div>
+                <div class="cert-card-description">Cisco Networking Academy</div>
+                <div class="cert-card-badge">Intermediate</div>
+              </a>
+              
+              <a href="https://drive.google.com/file/d/19BitTfHjSbj-Y6CGvmW28B9Doy5809IZ/view" class="cert-card" target="_blank">
+                <i class="fas fa-shield-alt"></i>
+                <div class="cert-card-title">Networking Support and Security</div>
+                <div class="cert-card-description">Cisco Networking Academy</div>
+                <div class="cert-card-badge">Intermediate</div>
+              </a>
+              
+              <a href="https://drive.google.com/file/d/14zQ0bFp9a3IDUmVO-rTc7Za7eKOKL1WN/view" class="cert-card" target="_blank">
+                <i class="fas fa-road"></i>
+                <div class="cert-card-title">Network Technician Career Path</div>
+                <div class="cert-card-description">Cisco Networking Academy</div>
+                <div class="cert-card-badge">Career Path</div>
+              </a>
+              
+              <a href="https://drive.google.com/file/d/1I7BK7A_f2zFJru0RyhfGnfa_Pjf-HK8m/view" class="cert-card" target="_blank">
+                <i class="fas fa-project-diagram"></i>
+                <div class="cert-card-title">Networking Basics</div>
+                <div class="cert-card-description">Cisco Networking Academy</div>
+                <div class="cert-card-badge">Fundamental</div>
+              </a>
+            </div>
+          </div>
+          
+          <div class="terminal-prompt" style="margin-top: 20px;">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">echo "Cisco certifications loaded successfully!"</span>
+          </div>
+          <div class="terminal-output">
+            Cisco certifications loaded successfully!
+          </div>
+        </div>
+      </div>
+      
+      <!-- VENTANA DE TERMINAL: HACK THE BOX BADGES (COMPLETA) -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">htb_badges.sh</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">show_certs --category=htb --all</span>
+          </div>
+          
+          <div class="terminal-output">
+            Loading ALL Hack The Box Academy badges (32 total)...
+          </div>
+          
+          <div class="category-section">
+            <h2 class="category-title">Hack The Box Badges (32 Total)</h2>
+            <div class="certs-grid">
+              <!-- Linux Introduction -->
+              <a href="https://academy.hackthebox.com/achievement/915489/18" class="cert-card" target="_blank">
+                <i class="fab fa-linux"></i>
+                <div class="cert-card-title">Linux Introduction</div>
+                <div class="cert-card-badge">Fundamental</div>
+              </a>
+              
+              <!-- File Transfers -->
+              <a href="https://academy.hackthebox.com/achievement/915489/24" class="cert-card" target="_blank">
+                <i class="fas fa-exchange-alt"></i>
+                <div class="cert-card-title">File Transfers</div>
+                <div class="cert-card-badge">Practical</div>
+              </a>
+              
+              <!-- File Inclusion -->
+              <a href="https://academy.hackthebox.com/achievement/915489/23" class="cert-card" target="_blank">
+                <i class="fas fa-file"></i>
+                <div class="cert-card-title">File Inclusion</div>
+                <div class="cert-card-badge">Web Security</div>
+              </a>
+              
+              <!-- Network Enumeration with Nmap -->
+              <a href="https://academy.hackthebox.com/achievement/915489/19" class="cert-card" target="_blank">
+                <i class="fas fa-search"></i>
+                <div class="cert-card-title">Network Enumeration with Nmap</div>
+                <div class="cert-card-badge">Practical</div>
+              </a>
+              
+              <!-- SQL Injection Fundamentals -->
+              <a href="https://academy.hackthebox.com/achievement/915489/33" class="cert-card" target="_blank">
+                <i class="fas fa-database"></i>
+                <div class="cert-card-title">SQL Injection Fundamentals</div>
+                <div class="cert-card-badge">Web Security</div>
+              </a>
+              
+              <!-- Introduction to Networking -->
+              <a href="https://academy.hackthebox.com/achievement/915489/34" class="cert-card" target="_blank">
+                <i class="fas fa-network-wired"></i>
+                <div class="cert-card-title">Introduction to Networking</div>
+                <div class="cert-card-badge">Fundamental</div>
+              </a>
+              
+              <!-- Web Requests -->
+              <a href="https://academy.hackthebox.com/achievement/915489/35" class="cert-card" target="_blank">
+                <i class="fas fa-globe"></i>
+                <div class="cert-card-title">Web Requests</div>
+                <div class="cert-card-badge">Web Fundamentals</div>
+              </a>
+              
+              <!-- Using the Metasploit Framework -->
+              <a href="https://academy.hackthebox.com/achievement/915489/39" class="cert-card" target="_blank">
+                <i class="fas fa-bomb"></i>
+                <div class="cert-card-title">Using the Metasploit Framework</div>
+                <div class="cert-card-badge">Exploitation</div>
+              </a>
+              
+              <!-- Linux Privilege Escalation -->
+              <a href="https://academy.hackthebox.com/achievement/915489/51" class="cert-card" target="_blank">
+                <i class="fab fa-linux"></i>
+                <div class="cert-card-title">Linux Privilege Escalation</div>
+                <div class="cert-card-badge">Advanced</div>
+              </a>
+              
+              <!-- Attacking Web Applications with Ffuf -->
+              <a href="https://academy.hackthebox.com/achievement/915489/54" class="cert-card" target="_blank">
+                <i class="fas fa-code"></i>
+                <div class="cert-card-title">Attacking Web Applications with Ffuf</div>
+                <div class="cert-card-badge">Web Security</div>
+              </a>
+              
+              <!-- Login Brute Forcing -->
+              <a href="https://academy.hackthebox.com/achievement/915489/57" class="cert-card" target="_blank">
+                <i class="fas fa-key"></i>
+                <div class="cert-card-title">Login Brute Forcing</div>
+                <div class="cert-card-badge">Authentication</div>
+              </a>
+              
+              <!-- Windows Fundamentals -->
+              <a href="https://academy.hackthebox.com/achievement/915489/49" class="cert-card" target="_blank">
+                <i class="fab fa-windows"></i>
+                <div class="cert-card-title">Windows Fundamentals</div>
+                <div class="cert-card-badge">Fundamental</div>
+              </a>
+              
+              <!-- SQLMap Essentials -->
+              <a href="https://academy.hackthebox.com/achievement/915489/58" class="cert-card" target="_blank">
+                <i class="fas fa-database"></i>
+                <div class="cert-card-title">SQLMap Essentials</div>
+                <div class="cert-card-badge">Automation</div>
+              </a>
+              
+              <!-- Windows Privilege Escalation -->
+              <a href="https://academy.hackthebox.com/achievement/915489/67" class="cert-card" target="_blank">
+                <i class="fab fa-windows"></i>
+                <div class="cert-card-title">Windows Privilege Escalation</div>
+                <div class="cert-card-badge">Advanced</div>
+              </a>
+              
+              <!-- Introduction to Web Applications -->
+              <a href="https://academy.hackthebox.com/achievement/915489/75" class="cert-card" target="_blank">
+                <i class="fas fa-code"></i>
+                <div class="cert-card-title">Introduction to Web Applications</div>
+                <div class="cert-card-badge">Fundamental</div>
+              </a>
+              
+              <!-- Penetration Testing Process -->
+              <a href="https://academy.hackthebox.com/achievement/915489/90" class="cert-card" target="_blank">
+                <i class="fas fa-clipboard-list"></i>
+                <div class="cert-card-title">Penetration Testing Process</div>
+                <div class="cert-card-badge">Methodology</div>
+              </a>
+              
+              <!-- Cross-Site Scripting (XSS) -->
+              <a href="https://academy.hackthebox.com/achievement/915489/103" class="cert-card" target="_blank">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div class="cert-card-title">Cross-Site Scripting (XSS)</div>
+                <div class="cert-card-badge">Web Security</div>
+              </a>
+              
+              <!-- Vulnerability Assessment -->
+              <a href="https://academy.hackthebox.com/achievement/915489/108" class="cert-card" target="_blank">
+                <i class="fas fa-bug"></i>
+                <div class="cert-card-title">Vulnerability Assessment</div>
+                <div class="cert-card-badge">Assessment</div>
+              </a>
+              
+              <!-- Command Injections -->
+              <a href="https://academy.hackthebox.com/achievement/915489/109" class="cert-card" target="_blank">
+                <i class="fas fa-terminal"></i>
+                <div class="cert-card-title">Command Injections</div>
+                <div class="cert-card-badge">Web Security</div>
+              </a>
+              
+              <!-- Using Web Proxies -->
+              <a href="https://academy.hackthebox.com/achievement/915489/110" class="cert-card" target="_blank">
+                <i class="fas fa-server"></i>
+                <div class="cert-card-title">Using Web Proxies</div>
+                <div class="cert-card-badge">Tools</div>
+              </a>
+              
+              <!-- Footprinting -->
+              <a href="https://academy.hackthebox.com/achievement/915489/112" class="cert-card" target="_blank">
+                <i class="fas fa-search"></i>
+                <div class="cert-card-title">Footprinting</div>
+                <div class="cert-card-badge">Reconnaissance</div>
+              </a>
+              
+              <!-- Attacking Common Applications -->
+              <a href="https://academy.hackthebox.com/achievement/915489/113" class="cert-card" target="_blank">
+                <i class="fas fa-mobile-alt"></i>
+                <div class="cert-card-title">Attacking Common Applications</div>
+                <div class="cert-card-badge">Applications</div>
+              </a>
+              
+              <!-- Shells & Payloads -->
+              <a href="https://academy.hackthebox.com/achievement/915489/115" class="cert-card" target="_blank">
+                <i class="fas fa-terminal"></i>
+                <div class="cert-card-title">Shells & Payloads</div>
+                <div class="cert-card-badge">Exploitation</div>
+              </a>
+              
+              <!-- Attacking Common Services -->
+              <a href="https://academy.hackthebox.com/achievement/915489/116" class="cert-card" target="_blank">
+                <i class="fas fa-bolt"></i>
+                <div class="cert-card-title">Attacking Common Services</div>
+                <div class="cert-card-badge">Services</div>
+              </a>
+              
+              <!-- Web Attacks -->
+              <a href="https://academy.hackthebox.com/achievement/915489/134" class="cert-card" target="_blank">
+                <i class="fas fa-code"></i>
+                <div class="cert-card-title">Web Attacks</div>
+                <div class="cert-card-badge">Web Security</div>
+              </a>
+              
+              <!-- File Upload Attacks -->
+              <a href="https://academy.hackthebox.com/achievement/915489/136" class="cert-card" target="_blank">
+                <i class="fas fa-upload"></i>
+                <div class="cert-card-title">File Upload Attacks</div>
+                <div class="cert-card-badge">Web Security</div>
+              </a>
+              
+              <!-- Active Directory Enumeration & Attacks -->
+              <a href="https://academy.hackthebox.com/achievement/915489/143" class="cert-card" target="_blank">
+                <i class="fas fa-sitemap"></i>
+                <div class="cert-card-title">Active Directory Enumeration & Attacks</div>
+                <div class="cert-card-badge">Enterprise</div>
+              </a>
+              
+              <!-- Information Gathering - Web Edition -->
+              <a href="https://academy.hackthebox.com/achievement/915489/144" class="cert-card" target="_blank">
+                <i class="fas fa-info-circle"></i>
+                <div class="cert-card-title">Information Gathering - Web Edition</div>
+                <div class="cert-card-badge">Reconnaissance</div>
+              </a>
+              
+              <!-- Server-side Attacks -->
+              <a href="https://academy.hackthebox.com/achievement/915489/145" class="cert-card" target="_blank">
+                <i class="fas fa-server"></i>
+                <div class="cert-card-title">Server-side Attacks</div>
+                <div class="cert-card-badge">Server Security</div>
+              </a>
+              
+              <!-- Pivoting, Tunneling, and Port Forwarding -->
+              <a href="https://academy.hackthebox.com/achievement/915489/158" class="cert-card" target="_blank">
+                <i class="fas fa-exchange-alt"></i>
+                <div class="cert-card-title">Pivoting, Tunneling, and Port Forwarding</div>
+                <div class="cert-card-badge">Advanced Networking</div>
+              </a>
+              
+              <!-- Documentation & Reporting -->
+              <a href="https://academy.hackthebox.com/achievement/915489/162" class="cert-card" target="_blank">
+                <i class="fas fa-file-alt"></i>
+                <div class="cert-card-title">Documentation & Reporting</div>
+                <div class="cert-card-badge">Professional</div>
+              </a>
+              
+              <!-- Attacking Enterprise Networks -->
+              <a href="https://academy.hackthebox.com/achievement/915489/163" class="cert-card" target="_blank">
+                <i class="fas fa-building"></i>
+                <div class="cert-card-title">Attacking Enterprise Networks</div>
+                <div class="cert-card-badge">Enterprise</div>
+              </a>
+            </div>
+          </div>
+          
+          <div class="terminal-prompt" style="margin-top: 20px;">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">echo "All 32 Hack The Box badges loaded successfully!"</span>
+          </div>
+          <div class="terminal-output">
+            All 32 Hack The Box badges loaded successfully!
+          </div>
+        </div>
+      </div>
+      
+      <!-- VENTANA DE TERMINAL: FORAGE CERTIFICATIONS -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">forage_certs.sh</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">show_certs --category=forage</span>
+          </div>
+          
+          <div class="terminal-output">
+            Displaying Forage job simulation certificates...
+          </div>
+          
+          <div class="category-section">
+            <h2 class="category-title">Forage Job Simulations</h2>
+            <div class="certs-grid">
+              <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/9PBTqmSxAf6zZTseP/E9pA6qsdbeyEkp3ti_9PBTqmSxAf6zZTseP_hZL26pyxygiif83Qh_1753014377241_completion_certificate.pdf" class="cert-card" target="_blank">
+                <i class="fas fa-building"></i>
+                <div class="cert-card-title">Deloitte Australia - Cyber Job Simulation</div>
+                <div class="cert-card-description">Forage / Deloitte</div>
+                <div class="cert-card-badge">Job Simulation</div>
+              </a>
+              
+              <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/mfxGwGDp6WkQmtmTf/vcKAB5yYAgvemepGQ_mfxGwGDp6WkQmtmTf_hZL26pyxygiif83Qh_1753014377132_completion_certificate.pdf" class="cert-card" target="_blank">
+                <i class="fas fa-credit-card"></i>
+                <div class="cert-card-title">Mastercard - Cybersecurity Job Simulation</div>
+                <div class="cert-card-description">Forage / Mastercard</div>
+                <div class="cert-card-badge">Job Simulation</div>
+              </a>
+              
+              <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/ifobHAoMjQs9s6bKS/gmf3ypEXBj2wvfQWC_ifobHAoMjQs9s6bKS_hZL26pyxygiif83Qh_1753025845869_completion_certificate.pdf" class="cert-card" target="_blank">
+                <i class="fas fa-building"></i>
+                <div class="cert-card-title">Tata - Cybersecurity Analyst Job Simulation</div>
+                <div class="cert-card-description">Forage / Tata Consultancy Services</div>
+                <div class="cert-card-badge">Job Simulation</div>
+              </a>
+              
+              <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/M6JGAwZ52SMusMEcK/RNhbu8QnDzthwynEf_M6JGAwZ52SMusMEcK_hZL26pyxygiif83Qh_1753028983436_completion_certificate.pdf" class="cert-card" target="_blank">
+                <i class="fas fa-satellite-dish"></i>
+                <div class="cert-card-title">Telstra AU - Cybersecurity Job Simulation</div>
+                <div class="cert-card-description">Forage / Telstra</div>
+                <div class="cert-card-badge">Job Simulation</div>
+              </a>
+            </div>
+          </div>
+          
+          <div class="terminal-prompt" style="margin-top: 20px;">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">echo "Forage certificates loaded successfully!"</span>
+          </div>
+          <div class="terminal-output">
+            Forage certificates loaded successfully!
+          </div>
+        </div>
+      </div>
+      
+      <!-- VENTANA DE TERMINAL: FOOTER -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">session_log.txt</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">exit</span>
+          </div>
+          <div class="terminal-output">
+            Session terminated. Connection closed.
+          </div>
+          <div style="text-align: center; margin-top: 15px; color: #aaa;">
+            © 2025 Jonas Fernandez — Cybersecurity Portfolio v2.0
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <h2 class="section-title">Cisco Certifications</h2>
-  <div class="grid-container">
-    <a href="https://drive.google.com/file/d/1_79lC0bSY4D7s8xL8RCpqUFxkPUQCE3T/view?pli=1" class="card" target="_blank">
-      <div class="card-title">Introduction to Cybersecurity</div>
-    </a>
-    <a href="https://drive.google.com/file/d/1rb5BpZF_b-BUh0GpKgjghHHIXteaBAA-/view" class="card" target="_blank">
-      <div class="card-title">Networking and Addressing Troubleshooting</div>
-    </a>
-    <a href="https://drive.google.com/file/d/1hgiQtpD0aIqecOoEZ6vH8HymUAZTIfZT/view" class="card" target="_blank">
-      <div class="card-title">Networking Devices and Initial Configuration</div>
-    </a>
-    <a href="https://drive.google.com/file/d/19BitTfHjSbj-Y6CGvmW28B9Doy5809IZ/view" class="card" target="_blank">
-      <div class="card-title">Networking Support and Security</div>
-    </a>
-    <a href="https://drive.google.com/file/d/14zQ0bFp9a3IDUmVO-rTc7Za7eKOKL1WN/view" class="card" target="_blank">
-      <div class="card-title">Network Technician Career Path</div>
-    </a>
-    <a href="https://drive.google.com/file/d/1I7BK7A_f2zFJru0RyhfGnfa_Pjf-HK8m/view" class="card" target="_blank">
-      <div class="card-title">Networking Basics</div>
-    </a>
-  </div>
-  <h2 class="section-title">Hack The Box Badges</h2>
-  <div class="grid-container">
-    <a href="https://academy.hackthebox.com/achievement/915489/18" class="card" target="_blank">
-      <div class="card-title">Linux Introduction</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/24" class="card" target="_blank">
-      <div class="card-title">File Transfers</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/23" class="card" target="_blank">
-      <div class="card-title">File Inclusion</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/19" class="card" target="_blank">
-      <div class="card-title">Network Enumeration with Nmap</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/33" class="card" target="_blank">
-      <div class="card-title">SQL Injection Fundamentals</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/34" class="card" target="_blank">
-      <div class="card-title">Introduction to Networking</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/35" class="card" target="_blank">
-      <div class="card-title">Web Requests</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/39" class="card" target="_blank">
-      <div class="card-title">Using the Metasploit Framework</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/51" class="card" target="_blank">
-      <div class="card-title">Linux Privilege Escalation</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/54" class="card" target="_blank">
-      <div class="card-title">Attacking Web Applications with Ffuf</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/57" class="card" target="_blank">
-      <div class="card-title">Login Brute Forcing</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/49" class="card" target="_blank">
-      <div class="card-title">Windows Fundamentals</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/58" class="card" target="_blank">
-      <div class="card-title">SQLMap Essentials</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/67" class="card" target="_blank">
-      <div class="card-title">Windows Privilege Escalation</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/75" class="card" target="_blank">
-      <div class="card-title">Introduction to Web Applications</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/90" class="card" target="_blank">
-      <div class="card-title">Penetration Testing Process</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/103" class="card" target="_blank">
-      <div class="card-title">Cross-Site Scripting (XSS)</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/108" class="card" target="_blank">
-      <div class="card-title">Vulnerability Assessment</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/109" class="card" target="_blank">
-      <div class="card-title">Command Injections</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/110" class="card" target="_blank">
-      <div class="card-title">Using Web Proxies</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/112" class="card" target="_blank">
-      <div class="card-title">Footprinting</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/113" class="card" target="_blank">
-      <div class="card-title">Attacking Common Applications</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/115" class="card" target="_blank">
-      <div class="card-title">Shells & Payloads</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/116" class="card" target="_blank">
-      <div class="card-title">Attacking Common Services</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/134" class="card" target="_blank">
-      <div class="card-title">Web Attacks</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/136" class="card" target="_blank">
-      <div class="card-title">File Upload Attacks</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/143" class="card" target="_blank">
-      <div class="card-title">Active Directory Enumeration & Attacks</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/144" class="card" target="_blank">
-      <div class="card-title">Information Gathering - Web Edition</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/145" class="card" target="_blank">
-      <div class="card-title">Server-side Attacks</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/158" class="card" target="_blank">
-      <div class="card-title">Pivoting, Tunneling, and Port Forwarding</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/162" class="card" target="_blank">
-      <div class="card-title">Documentation & Reporting</div>
-    </a>
-    <a href="https://academy.hackthebox.com/achievement/915489/163" class="card" target="_blank">
-      <div class="card-title">Attacking Enterprise Networks</div>
-    </a>
-  </div>
-  <h2 class="section-title">Forage Certifications</h2>
-  <div class="grid-container">
-    <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/9PBTqmSxAf6zZTseP/E9pA6qsdbeyEkp3ti_9PBTqmSxAf6zZTseP_hZL26pyxygiif83Qh_1753014377241_completion_certificate.pdf" class="card" target="_blank">
-      <div class="card-title">Deloitte Australia - Cyber Job Simulation</div>
-    </a>
-    <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/mfxGwGDp6WkQmtmTf/vcKAB5yYAgvemepGQ_mfxGwGDp6WkQmtmTf_hZL26pyxygiif83Qh_1753014377132_completion_certificate.pdf" class="card" target="_blank">
-      <div class="card-title">Mastercard - Cybersecurity Job Simulation</div>
-    </a>
-    <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/ifobHAoMjQs9s6bKS/gmf3ypEXBj2wvfQWC_ifobHAoMjQs9s6bKS_hZL26pyxygiif83Qh_1753025845869_completion_certificate.pdf" class="card" target="_blank">
-      <div class="card-title">Tata - Cybersecurity Analyst Job Simulation</div>
-    </a>
-    <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/M6JGAwZ52SMusMEcK/RNhbu8QnDzthwynEf_M6JGAwZ52SMusMEcK_hZL26pyxygiif83Qh_1753028983436_completion_certificate.pdf" class="card" target="_blank">
-      <div class="card-title">Telstra AU - Cybersecurity Job Simulation</div>
-    </a>
-  </div>
-  <footer>
-    © 2025 Jonas Fernandez — All rights reserved.
-  </footer>
+  
+  <script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+    if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+            var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+            var firstSheetName = workbook.SheetNames[0];
+            var worksheet = workbook.Sheets[firstSheetName];
+
+            // Convert sheet to JSON to filter blank rows
+            var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+            // Filter out blank rows (rows where all cells are empty, null, or undefined)
+            var filteredData = jsonData.filter(row => row.some(filledCell));
+
+            // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+            var headerRowIndex = filteredData.findIndex((row, index) =>
+              row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+            );
+            // Fallback
+            if (headerRowIndex === -1 || headerRowIndex > 25) {
+              headerRowIndex = 0;
+            }
+
+            // Convert filtered JSON back to CSV
+            var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+            csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+            return csv;
+        } catch (e) {
+            console.error(e);
+            return "";
+        }
+    }
+    return gk_fileData[filename] || "";
+    }
+  </script>
 </body>
 </html>

@@ -1,235 +1,1012 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Projects — Jonas Fernandez</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
-      background-color: #000;
-      color: #FFFF00;
-      font-family: 'Press Start 2P', monospace;
+    :root {
+      --ubuntu-dark: #2C001E;
+      --ubuntu-orange: #E95420;
+      --ubuntu-light: #F5F5F5;
+      --ubuntu-gray: #333333;
+      --ubuntu-blue: #0D6EFD;
+      --terminal-bg: #300A24;
+      --terminal-text: #F0F0F0;
+      --terminal-green: #4AF626;
+      --terminal-yellow: #FFD700;
+      --terminal-cyan: #00FFFF;
+    }
+    
+    * {
       margin: 0;
       padding: 0;
-      image-rendering: pixelated;
+      box-sizing: border-box;
     }
-    header {
-      text-align: center;
-      padding: 2rem 1rem;
-      border-bottom: 3px solid #FF0000;
-      background-color: #111;
+    
+    body {
+      background: linear-gradient(135deg, var(--ubuntu-dark) 0%, #1a0a14 100%);
+      color: var(--terminal-text);
+      font-family: 'Ubuntu Mono', monospace;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0;
+      margin: 0;
     }
-    h1, h2, h3 {
-      color: #FFFF00;
-      text-shadow: 2px 2px #FF0000;
-    }
-    h1 {
-      font-size: 1.5rem;
-    }
-    h2, h3 {
-      font-size: 1rem;
-    }
-    p {
-      max-width: 800px;
-      margin: 1rem auto;
-      line-height: 1.5;
-      color: #FFFFFF;
-      font-size: 0.8rem;
-    }
-    .section-title {
-      text-align: center;
-      margin-top: 3rem;
-      margin-bottom: 1rem;
-      border-bottom: 3px solid #FF0000;
-      padding-bottom: 0.5rem;
-    }
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-      padding: 2rem;
+    
+    /* TERMINAL PRINCIPAL (CONTENEDOR) */
+    .main-terminal {
       max-width: 1200px;
-      margin: auto;
+      margin: 30px auto;
+      background: var(--terminal-bg);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
     }
-    .card {
-      background-color: #111;
-      border: 3px solid #FF0000;
-      border-radius: 0;
-      padding: 1rem;
-      text-align: center;
-      text-decoration: none;
-      color: #FFFF00;
-      transition: transform 0.2s;
+    
+    .main-terminal-bar {
+      background: linear-gradient(to right, #333, #444);
+      height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
     }
-    .card:hover {
-      transform: scale(1.1);
-      background-color: #222;
+    
+    .terminal-buttons {
+      display: flex;
+      gap: 8px;
     }
-    .card-title {
-      font-weight: bold;
-      margin-top: 0.5rem;
-      font-size: 0.8rem;
+    
+    .terminal-button {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
     }
+    
+    .close { background: #FF5F56; }
+    .minimize { background: #FFBD2E; }
+    .maximize { background: #27CA3F; }
+    
+    .main-terminal-body {
+      padding: 30px;
+    }
+    
+    /* NAVEGACIÓN */
     nav {
-      text-align: center;
-      padding: 1rem;
-      background-color: #111;
-      border-bottom: 3px solid #FF0000;
+      display: flex;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      margin-bottom: 30px;
+      border-radius: 5px;
+      flex-wrap: wrap;
     }
+    
     nav a {
-      color: #FFFF00;
-      margin: 0 1rem;
+      color: var(--terminal-cyan);
       text-decoration: none;
-      font-size: 0.8rem;
-      text-shadow: 1px 1px #FF0000;
+      margin: 0 15px;
+      padding: 8px 15px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      position: relative;
     }
+    
     nav a:hover {
-      color: #FFFFFF;
+      background: rgba(233, 84, 32, 0.2);
+      color: var(--terminal-yellow);
     }
-    footer {
-      text-align: center;
-      padding: 2rem;
-      border-top: 3px solid #FF0000;
-      margin-top: 2rem;
-      color: #FFFFFF;
-      font-size: 0.7rem;
+    
+    nav a::after {
+      content: '>';
+      position: absolute;
+      right: -10px;
+      opacity: 0;
+      transition: opacity 0.3s;
     }
-    a {
-      color: #FFFF00;
+    
+    nav a:hover::after {
+      opacity: 1;
     }
+    
+    /* TÍTULOS */
+    h1, h2, h3 {
+      font-family: 'Ubuntu', sans-serif;
+      font-weight: 500;
+    }
+    
+    h1 {
+      color: var(--terminal-yellow);
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      position: relative;
+      display: inline-block;
+    }
+    
+    h1::after {
+      content: '_';
+      animation: blink 1s infinite;
+    }
+    
+    /* VENTANAS DE TERMINAL INDIVIDUALES */
+    .terminal-window {
+      background: rgba(40, 10, 30, 0.8);
+      border-radius: 8px;
+      margin: 30px 0;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      border: 1px solid rgba(233, 84, 32, 0.1);
+    }
+    
+    .window-bar {
+      background: linear-gradient(to right, #3a3a3a, #4a4a4a);
+      height: 28px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    }
+    
+    .window-title {
+      color: #ddd;
+      font-size: 0.85rem;
+      margin-left: 10px;
+      flex-grow: 1;
+    }
+    
+    .window-body {
+      padding: 20px;
+    }
+    
+    /* ESTILOS MEJORADOS PARA EL TERMINAL */
+    .terminal-line {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      font-family: 'Ubuntu Mono', monospace;
+    }
+    
+    .terminal-prefix {
+      color: var(--terminal-green);
+      white-space: nowrap;
+      margin-right: 8px;
+      user-select: none;
+      min-width: 40px;
+    }
+    
+    .terminal-command {
+      color: var(--terminal-text);
+      flex-grow: 1;
+    }
+    
+    .terminal-output {
+      color: var(--terminal-cyan);
+      margin-left: 48px;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+    
+    .terminal-prompt {
+      color: var(--terminal-yellow);
+      margin-bottom: 15px;
+      font-family: 'Ubuntu Mono', monospace;
+      display: flex;
+      align-items: center;
+    }
+    
+    .terminal-prompt::before {
+      content: "┌──(";
+      color: var(--terminal-cyan);
+      margin-right: 2px;
+    }
+    
+    .terminal-prompt::after {
+      content: ")-[~]";
+      color: var(--terminal-cyan);
+      margin-left: 2px;
+    }
+    
+    /* CONTENIDO PROJECTS */
     .hero-image {
-      display: block;
-      margin: 0 auto;
-      max-width: 800px;
-      height: auto;
-      border: 3px solid #FF0000;
+      width: 100%;
+      max-height: 400px;
+      object-position: center 40%;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(233, 84, 32, 0.2);
+    }
+    
+    /* GRID DE PROYECTOS */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 25px 0;
+    }
+    
+    .project-card {
+      background: rgba(48, 10, 36, 0.7);
+      border: 1px solid rgba(233, 84, 32, 0.3);
+      border-radius: 6px;
+      padding: 20px;
+      text-decoration: none;
+      color: var(--terminal-text);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 100px;
+    }
+    
+    .project-card:hover {
+      border-color: var(--ubuntu-orange);
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(233, 84, 32, 0.2);
+      background: rgba(48, 10, 36, 0.9);
+    }
+    
+    .project-card:hover::before {
+      content: "▶";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--terminal-green);
+      font-size: 1.2rem;
+    }
+    
+    .project-card i {
+      font-size: 1.5rem;
+      color: var(--ubuntu-orange);
+      margin-bottom: 10px;
+    }
+    
+    .project-card-title {
+      color: var(--terminal-yellow);
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+    
+    .project-card-badge {
+      display: inline-block;
+      background: rgba(233, 84, 32, 0.2);
+      color: var(--terminal-cyan);
+      padding: 3px 10px;
+      border-radius: 15px;
+      font-size: 0.75rem;
+      margin-top: 8px;
+    }
+    
+    /* CATEGORÍAS */
+    .category-section {
+      margin-bottom: 40px;
+    }
+    
+    .category-title {
+      color: var(--terminal-yellow);
+      font-size: 1.5rem;
+      margin: 25px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--ubuntu-orange);
+    }
+    
+    /* INFO BOX */
+    .info-box {
+      background: rgba(48, 10, 36, 0.7);
+      border-left: 4px solid var(--ubuntu-orange);
+      padding: 15px 20px;
+      margin: 20px 0;
+      border-radius: 0 6px 6px 0;
+    }
+    
+    .info-box p {
+      color: var(--terminal-cyan);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+    
+    .info-box a {
+      color: var(--terminal-yellow);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .info-box a:hover {
+      color: var(--terminal-green);
+      text-decoration: underline;
+    }
+    
+    /* FOOTER */
+    footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+    }
+    
+    /* EFECTOS DE ANIMACIÓN */
+    .typewriter {
+      overflow: hidden;
+      white-space: nowrap;
+      animation: typing 3.5s steps(40, end);
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+    
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .main-terminal-body {
+        padding: 20px;
+      }
+      
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      nav a {
+        margin: 5px 0;
+        width: 100%;
+        text-align: center;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+      }
+      
+      .terminal-line {
+        flex-direction: column;
+      }
+      
+      .terminal-output {
+        margin-left: 30px;
+      }
+      
+      .project-card {
+        padding: 15px;
+        min-height: 80px;
+      }
+      
+      .project-card-title {
+        font-size: 0.9rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="projects.html">Projects</a>
-    <a href="cv.html">CV</a>
-    <a href="certs.html">Certifications</a>
-    <a href="youtube.html">YouTube</a>
-  </nav>
-  <header>
-    <img src="images/hero-projects.jpg" alt="Hero Image" class="hero-image">
-    <h1>Projects</h1>
-  </header>
-  <h2 class="section-title">Hack The Box Reports</h2>
-  <p>Below are my Hack The Box reports, showcasing my pentesting work. Visit my <a href="https://github.com/jonas-fernandez-as/Pentesting" target="_blank">GitHub</a> for additional projects and code.</p>
-  <h3 class="section-title">Starting Point Machines</h3>
-  <div class="grid-container">
-    <a href="REPORTS/Starting Point/Appointment.pdf" class="card" target="_blank"><div class="card-title">Appointment</div></a>
-    <a href="REPORTS/Starting Point/Archetype.pdf" class="card" target="_blank"><div class="card-title">Archetype</div></a>
-    <a href="REPORTS/Starting Point/Base.pdf" class="card" target="_blank"><div class="card-title">Base</div></a>
-    <a href="REPORTS/Starting Point/Crocodile.pdf" class="card" target="_blank"><div class="card-title">Crocodile</div></a>
-    <a href="REPORTS/Starting Point/Dancing.pdf" class="card" target="_blank"><div class="card-title">Dancing</div></a>
-    <a href="REPORTS/Starting Point/Explosion.pdf" class="card" target="_blank"><div class="card-title">Explosion</div></a>
-    <a href="REPORTS/Starting Point/Fawn.pdf" class="card" target="_blank"><div class="card-title">Fawn</div></a>
-    <a href="REPORTS/Starting Point/Funnel.pdf" class="card" target="_blank"><div class="card-title">Funnel</div></a>
-    <a href="REPORTS/Starting Point/Ignition.pdf" class="card" target="_blank"><div class="card-title">Ignition</div></a>
-    <a href="REPORTS/Starting Point/Included.pdf" class="card" target="_blank"><div class="card-title">Included</div></a>
-    <a href="REPORTS/Starting Point/Markup.pdf" class="card" target="_blank"><div class="card-title">Markup</div></a>
-    <a href="REPORTS/Starting Point/Mongod.pdf" class="card" target="_blank"><div class="card-title">Mongod</div></a>
-    <a href="REPORTS/Starting Point/Oopsie.pdf" class="card" target="_blank"><div class="card-title">Oopsie</div></a>
-    <a href="REPORTS/Starting Point/Pennyworth.pdf" class="card" target="_blank"><div class="card-title">Pennyworth</div></a>
-    <a href="REPORTS/Starting Point/Preignition.pdf" class="card" target="_blank"><div class="card-title">Preignition</div></a>
-    <a href="REPORTS/Starting Point/REPORT MEOW HTB.pdf" class="card" target="_blank"><div class="card-title">Meow</div></a>
-    <a href="REPORTS/Starting Point/Redeemereport.pdf" class="card" target="_blank"><div class="card-title">Redeemer</div></a>
-    <a href="REPORTS/Starting Point/Responder.pdf" class="card" target="_blank"><div class="card-title">Responder</div></a>
-    <a href="REPORTS/Starting Point/Squel.pdf" class="card" target="_blank"><div class="card-title">Squel</div></a>
-    <a href="REPORTS/Starting Point/Synced.pdf" class="card" target="_blank"><div class="card-title">Synced</div></a>
-    <a href="REPORTS/Starting Point/Tactics.pdf" class="card" target="_blank"><div class="card-title">Tactics</div></a>
-    <a href="REPORTS/Starting Point/Three.pdf" class="card" target="_blank"><div class="card-title">Three</div></a>
-    <a href="REPORTS/Starting Point/Unified.pdf" class="card" target="_blank"><div class="card-title">Unified</div></a>
-    <a href="REPORTS/Starting Point/Vaccine.pdf" class="card" target="_blank"><div class="card-title">Vaccine</div></a>
+  <!-- TERMINAL PRINCIPAL -->
+  <div class="main-terminal">
+    <!-- BARRA SUPERIOR DEL TERMINAL PRINCIPAL -->
+    <div class="main-terminal-bar">
+      <div class="terminal-buttons">
+        <div class="terminal-button close"></div>
+        <div class="terminal-button minimize"></div>
+        <div class="terminal-button maximize"></div>
+      </div>
+      <div style="margin-left: 15px; color: #aaa; font-size: 0.9rem;">
+        jonas@portfolio: ~/projects
+      </div>
+    </div>
+    
+    <!-- CUERPO DEL TERMINAL PRINCIPAL -->
+    <div class="main-terminal-body">
+      <nav>
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="projects.html"><i class="fas fa-code"></i> Projects</a>
+        <a href="cv.html"><i class="fas fa-file-alt"></i> CV</a>
+        <a href="certs.html"><i class="fas fa-certificate"></i> Certifications</a>
+        <a href="youtube.html"><i class="fab fa-youtube"></i> YouTube</a>
+      </nav>
+      
+      <!-- VENTANA DE TERMINAL: ENCABEZADO -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">list_projects.sh</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">ls -la projects/</span>
+          </div>
+          
+          <div class="terminal-output typewriter">
+            <strong>Loading Hack The Box penetration testing reports...</strong>
+          </div>
+          
+          <img src="images/hero-projects.png" alt="Projects Hero Image" class="hero-image">
+          
+          <h1>Pentesting Projects & Reports</h1>
+          
+          <div class="terminal-prompt" style="margin-top: 20px;">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">echo "Detailed reports of Hack The Box machines and vulnerabilities"</span>
+          </div>
+          <div class="terminal-output">
+            Detailed reports of Hack The Box machines and vulnerabilities
+          </div>
+          
+          <div class="info-box">
+            <p>Below are my Hack The Box reports, showcasing my pentesting work. Visit my <a href="https://github.com/jonas-fernandez-as/Pentesting" target="_blank">GitHub</a> for additional projects and code.</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- VENTANA DE TERMINAL: STARTING POINT MACHINES -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">starting_point.sh</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">show_reports --category=starting_point</span>
+          </div>
+          
+          <div class="terminal-output">
+            Loading Starting Point Machines ...
+          </div>
+          
+          <div class="category-section">
+            <h2 class="category-title">Starting Point Machines</h2>
+            <div class="projects-grid">
+              <a href="REPORTS/Starting Point/Appointment.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Appointment</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Archetype.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Archetype</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Base.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Base</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Crocodile.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Crocodile</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Dancing.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Dancing</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Explosion.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Explosion</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Fawn.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Fawn</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Funnel.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Funnel</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Ignition.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Ignition</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Included.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Included</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Markup.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Markup</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Mongod.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Mongod</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Oopsie.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Oopsie</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Pennyworth.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Pennyworth</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Preignition.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Preignition</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/REPORT MEOW HTB.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Meow</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Redeemereport.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Redeemer</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Responder.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Responder</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Squel.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Squel</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Synced.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Synced</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Tactics.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Tactics</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Three.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Three</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Unified.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Unified</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+              
+              <a href="REPORTS/Starting Point/Vaccine.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Vaccine</div>
+                <div class="project-card-badge">Starting Point</div>
+              </a>
+            </div>
+          </div>
+          
+          <div class="terminal-prompt" style="margin-top: 20px;">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">echo "Starting Point reports loaded successfully!"</span>
+          </div>
+          <div class="terminal-output">
+            Starting Point reports loaded successfully!
+          </div>
+        </div>
+      </div>
+      
+      <!-- VENTANA DE TERMINAL: EASY MACHINES -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">easy_machines.sh</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">show_reports --category=easy</span>
+          </div>
+          
+          <div class="terminal-output">
+            Loading Easy Machines ...
+          </div>
+          
+          <div class="category-section">
+            <h2 class="category-title">Easy Machines</h2>
+            <div class="projects-grid">
+              <a href="REPORTS/Easy/Active report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Active</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Baby Report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Baby</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/BoardLight.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">BoardLight</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Cicada.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Cicada</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Data report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Data</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Devvortex.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Devvortex</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Driver.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Driver</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Down report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Down</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Forest report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Forest</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/GoodGames.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">GoodGames</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Jerry.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Jerry</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/MetaTwo Report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">MetaTwo</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Manage report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Manage</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Netmon report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Netmon</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Nibbles report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Nibbles</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Pandora Report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Pandora</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Outbound Report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Outbound</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Paper.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Paper</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Retro report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Retro</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Reset Report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Reset</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Sauna.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Sauna</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Sau.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Sau</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Sea report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Sea</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/ServMon report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">ServMon</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/SteamCloud.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">SteamCloud</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Support.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Support</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/TwoMillion.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">TwoMillion</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/VulnEscape Report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">VulnEscape</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+              
+              <a href="REPORTS/Easy/Writeup.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Writeup</div>
+                <div class="project-card-badge">Easy</div>
+              </a>
+            </div>
+          </div>
+          
+          <div class="terminal-prompt" style="margin-top: 20px;">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">echo "Easy machines reports loaded successfully!"</span>
+          </div>
+          <div class="terminal-output">
+            Easy machines reports loaded successfully!
+          </div>
+        </div>
+      </div>
+      
+      <!-- VENTANA DE TERMINAL: MEDIUM MACHINES -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">medium_machines.sh</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">show_reports --category=medium</span>
+          </div>
+          
+          <div class="terminal-output">
+            Loading Medium Machines ...
+          </div>
+          
+          <div class="category-section">
+            <h2 class="category-title">Medium Machines</h2>
+            <div class="projects-grid">
+              <a href="REPORTS/Medium/Administrator.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Administrator</div>
+                <div class="project-card-badge">Medium</div>
+              </a>
+              
+              <a href="REPORTS/Medium/Builder Report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Builder</div>
+                <div class="project-card-badge">Medium</div>
+              </a>
+              
+              <a href="REPORTS/Medium/Bruno Report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Bruno</div>
+                <div class="project-card-badge">Medium</div>
+              </a>
+              
+              <a href="REPORTS/Medium/Breach Report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Breach</div>
+                <div class="project-card-badge">Medium</div>
+              </a>
+              
+              <a href="REPORTS/Medium/Certified.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Certified</div>
+                <div class="project-card-badge">Medium</div>
+              </a>
+              
+              <a href="REPORTS/Medium/Delegate Report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Delegate</div>
+                <div class="project-card-badge">Medium</div>
+              </a>
+              
+              <a href="REPORTS/Medium/Slonik Report.pdf" class="project-card" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                <div class="project-card-title">Slonik</div>
+                <div class="project-card-badge">Medium</div>
+              </a>
+            </div>
+          </div>
+          
+          <div class="terminal-prompt" style="margin-top: 20px;">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">echo "Medium machines reports loaded successfully!"</span>
+          </div>
+          <div class="terminal-output">
+            Medium machines reports loaded successfully!
+          </div>
+        </div>
+      </div>
+      
+      <!-- VENTANA DE TERMINAL: FOOTER -->
+      <div class="terminal-window">
+        <div class="window-bar">
+          <div class="terminal-buttons">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+          </div>
+          <div class="window-title">session_log.txt</div>
+        </div>
+        <div class="window-body">
+          <div class="terminal-prompt">root@portfolio</div>
+          <div class="terminal-line">
+            <span class="terminal-prefix">└─$</span>
+            <span class="terminal-command">exit</span>
+          </div>
+          <div class="terminal-output">
+            Session terminated. Connection closed.
+          </div>
+          <div style="text-align: center; margin-top: 15px; color: #aaa;">
+            © 2025 Jonas Fernandez — Cybersecurity Portfolio v2.0
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <h3 class="section-title">Easy Machines</h3>
-  <div class="grid-container">
-    <a href="REPORTS/Easy/Active report.pdf" class="card" target="_blank"><div class="card-title">Active</div></a>
-    <a href="REPORTS/Easy/Baby Report.pdf" class="card" target="_blank"><div class="card-title">Baby</div></a>
-    <a href="REPORTS/Easy/BoardLight.pdf" class="card" target="_blank"><div class="card-title">BoardLight</div></a>
-    <a href="REPORTS/Easy/Cicada.pdf" class="card" target="_blank"><div class="card-title">Cicada</div></a>
-    <a href="REPORTS/Easy/Data report.pdf" class="card" target="_blank"><div class="card-title">Data</div></a>
-    <a href="REPORTS/Easy/Devvortex.pdf" class="card" target="_blank"><div class="card-title">Devvortex</div></a>
-    <a href="REPORTS/Easy/Driver.pdf" class="card" target="_blank"><div class="card-title">Driver</div></a>
-    <a href="REPORTS/Easy/Down report.pdf" class="card" target="_blank"><div class="card-title">Down</div></a>
-    <a href="REPORTS/Easy/Forest report.pdf" class="card" target="_blank"><div class="card-title">Forest</div></a>
-    <a href="REPORTS/Easy/GoodGames.pdf" class="card" target="_blank"><div class="card-title">GoodGames</div></a>
-    <a href="REPORTS/Easy/Jerry.pdf" class="card" target="_blank"><div class="card-title">Jerry</div></a>
-    <a href="REPORTS/Easy/MetaTwo Report.pdf" class="card" target="_blank"><div class="card-title">MetaTwo</div></a>
-    <a href="REPORTS/Easy/Manage report.pdf" class="card" target="_blank"><div class="card-title">Manage</div></a>
-    <a href="REPORTS/Easy/Netmon report.pdf" class="card" target="_blank"><div class="card-title">Netmon</div></a>
-    <a href="REPORTS/Easy/Nibbles report.pdf" class="card" target="_blank"><div class="card-title">Nibbles</div></a>
-    <a href="REPORTS/Easy/Pandora Report.pdf" class="card" target="_blank"><div class="card-title">Pandora</div></a>
-   <a href="REPORTS/Easy/Outbound Report.pdf" class="card" target="_blank"><div class="card-title">Outbound</div></a>
-    <a href="REPORTS/Easy/Paper.pdf" class="card" target="_blank"><div class="card-title">Paper</div></a>
-    <a href="REPORTS/Easy/Retro report.pdf" class="card" target="_blank"><div class="card-title">Retro</div></a>
-    <a href="REPORTS/Easy/Reset Report.pdf" class="card" target="_blank"><div class="card-title">Reset</div></a>
-    <a href="REPORTS/Easy/Sauna.pdf" class="card" target="_blank"><div class="card-title">Sauna</div></a>
-    <a href="REPORTS/Easy/Sau.pdf" class="card" target="_blank"><div class="card-title">Sau</div></a>
-    <a href="REPORTS/Easy/Sea report.pdf" class="card" target="_blank"><div class="card-title">Sea</div></a>
-    <a href="REPORTS/Easy/ServMon report.pdf" class="card" target="_blank"><div class="card-title">ServMon</div></a>
-    <a href="REPORTS/Easy/SteamCloud.pdf" class="card" target="_blank"><div class="card-title">SteamCloud</div></a>
-    <a href="REPORTS/Easy/Support.pdf" class="card" target="_blank"><div class="card-title">Support</div></a>
-    <a href="REPORTS/Easy/TwoMillion.pdf" class="card" target="_blank"><div class="card-title">TwoMillion</div></a>
-    <a href="REPORTS/Easy/VulnEscape Report.pdf" class="card" target="_blank"><div class="card-title">VulnEscape</div></a>
-    <a href="REPORTS/Easy/Writeup.pdf" class="card" target="_blank"><div class="card-title">Writeup</div></a>
-  </div>
-  <h3 class="section-title">Medium Machines</h3>
-  <div class="grid-container">
-    <a href="REPORTS/Medium/Administrator.pdf" class="card" target="_blank"><div class="card-title">Administrator</div></a>
-    <a href="REPORTS/Medium/Builder Report.pdf" class="card" target="_blank"><div class="card-title">Builder</div></a>
-    <a href="REPORTS/Medium/Bruno Report.pdf" class="card" target="_blank"><div class="card-title">Bruno</div></a>
-    <a href="REPORTS/Medium/Breach Report.pdf" class="card" target="_blank"><div class="card-title">Breach</div></a>
-    <a href="REPORTS/Medium/Certified.pdf" class="card" target="_blank"><div class="card-title">Certified</div></a>
-    <a href="REPORTS/Medium/Delegate Report.pdf" class="card" target="_blank"><div class="card-title">Delegate</div></a>
-    <a href="REPORTS/Medium/Slonik Report.pdf" class="card" target="_blank"><div class="card-title">Slonik</div></a>
-  </div>
-  <footer>
-    © 2025 Jonas Fernandez — All rights reserved.
-  </footer>
+  
+  <script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+    if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+            var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+            var firstSheetName = workbook.SheetNames[0];
+            var worksheet = workbook.Sheets[firstSheetName];
+
+            // Convert sheet to JSON to filter blank rows
+            var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+            // Filter out blank rows (rows where all cells are empty, null, or undefined)
+            var filteredData = jsonData.filter(row => row.some(filledCell));
+
+            // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+            var headerRowIndex = filteredData.findIndex((row, index) =>
+              row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+            );
+            // Fallback
+            if (headerRowIndex === -1 || headerRowIndex > 25) {
+              headerRowIndex = 0;
+            }
+
+            // Convert filtered JSON back to CSV
+            var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+            csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+            return csv;
+        } catch (e) {
+            console.error(e);
+            return "";
+        }
+    }
+    return gk_fileData[filename] || "";
+    }
+  </script>
 </body>
 </html>
