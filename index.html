@@ -29,6 +29,9 @@
       --crit:   #FF6B5C;
       --crit-d: rgba(255,107,92,.10);
       --crit-b: rgba(255,107,92,.32);
+      --high:   #FF4D4D;
+      --high-d: rgba(255,77,77,.10);
+      --high-b: rgba(255,77,77,.32);
       --emb:    #8792AC;
       --emb-d:  rgba(135,146,172,.10);
       --emb-b:  rgba(135,146,172,.30);
@@ -95,7 +98,7 @@
     }
 
     .hero-avatar {
-      width: 74px; height: 74px;
+      width: 180px; height: 180px;
       border-radius: 50%; object-fit: cover;
       border: 2px solid var(--bd);
       margin-bottom: 22px;
@@ -748,33 +751,46 @@
         </div>
       </div>
 
-      <div class="cve-card embargo fi" style="--accent:var(--emb); --accent-d:var(--emb-d); --accent-border:var(--emb-b); transition-delay:.16s">
+      <div class="cve-card embargo fi" style="--accent:var(--high); --accent-d:var(--high-d); --accent-border:var(--high-b); transition-delay:.16s">
         <div class="cve-badge-col">
-          <span class="cve-sev">Embargoed</span>
+          <span class="cve-sev">High · 8.6</span>
           <div class="cve-lpe">RCE</div>
-          <div class="cve-lpe-sub">Status</div>
-          <div class="cve-pending">DETAILS<br/>WITHHELD</div>
+          <div class="cve-lpe-sub">Severity</div>
+          <div class="cve-pending">VENDOR<br/>WITHHELD</div>
         </div>
 
         <div class="cve-content">
-          <h3><i class="fas fa-lock"></i>Remote Code Execution — Vendor Withheld Pending Disclosure</h3>
+          <h3><i class="fas fa-lock"></i>Remote Code Execution via File Upload in School Management Software</h3>
           <div class="cve-meta">
-            <span class="cve-tag">Remote Code Execution</span>
+            <span class="cve-tag">CWE-434</span>
+            <span class="cve-tag">CWE-94</span>
             <span class="cve-tag">Under Embargo · 2026</span>
           </div>
           <p>
-            Identified during independent research. Product, technical details, and severity scoring are withheld while disclosure is coordinated directly with the vendor — nothing further will be published until a fix is confirmed and public disclosure is agreed.
+            Identified a Remote Code Execution vulnerability in the add-on upload functionality of a school management platform: insufficient validation of uploaded files allows an authenticated administrator to achieve code execution on the server. Vendor and product name are withheld while disclosure is coordinated directly with them; full technical write-up will follow once a fix is confirmed and public disclosure is agreed.
           </p>
           <dl class="cve-dl">
             <dt>Product</dt>
-            <dd><span class="redacted">REDACTED</span> — withheld pending disclosure</dd>
+            <dd>School Management Software — vendor <span class="redacted">WITHHELD</span></dd>
+            <dt>Identified</dt>
+            <dd>26 June 2026</dd>
+            <dt>Score</dt>
+            <dd>8.6 High (CVSS v4.0)</dd>
+            <dt>Vector</dt>
+            <dd>CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N</dd>
             <dt>Status</dt>
             <dd>In direct contact with the vendor — fix in development</dd>
             <dt>Process</dt>
-            <dd>Additional coordination requested through INCIBE — response pending</dd>
+            <dd>Full CVD managed through INCIBE (Instituto Nacional de Ciberseguridad de España)</dd>
+            <dt>Reference</dt>
+            <dd>INCIBE Expediente INC-2026-0168</dd>
             <dt>Public Disclosure</dt>
             <dd>Full write-up to follow once a fix is released</dd>
           </dl>
+          <div class="incibe-pill">
+            <i class="fas fa-shield-halved"></i>
+            Coordinated via INCIBE · Expediente INC-2026-0168
+          </div>
         </div>
       </div>
 
@@ -796,7 +812,7 @@
       <div class="cred-info">
         <h4>OSCP+</h4>
         <p class="cred-issuer">Offensive Security · 2026</p>
-        <a class="cred-verify" href="https://www.credential.net/2ab7a94e-e66f-409a-8e56-a38dda843344" target="_blank">Verify credential <i class="fas fa-external-link-alt"></i></a>
+        <span class="cred-verify">Verify credential <i class="fas fa-external-link-alt"></i></span>
       </div>
     </a>
     <a class="cred" href="https://www.credential.net/af565611-8de7-424b-88a3-b6a9eba9f893" target="_blank">
@@ -804,7 +820,7 @@
       <div class="cred-info">
         <h4>OSCP</h4>
         <p class="cred-issuer">Offensive Security</p>
-        <a class="cred-verify" href="https://www.credential.net/af565611-8de7-424b-88a3-b6a9eba9f893" target="_blank">Verify credential <i class="fas fa-external-link-alt"></i></a>
+        <span class="cred-verify">Verify credential <i class="fas fa-external-link-alt"></i></span>
       </div>
     </a>
     <a class="cred" href="https://www.credential.net/601e2c30-69ba-4751-8a72-3d856b036ff0" target="_blank">
@@ -812,7 +828,7 @@
       <div class="cred-info">
         <h4>eJPTv2</h4>
         <p class="cred-issuer">INE / eLearnSecurity · 2025</p>
-        <a class="cred-verify" href="https://www.credential.net/601e2c30-69ba-4751-8a72-3d856b036ff0" target="_blank">Verify credential <i class="fas fa-external-link-alt"></i></a>
+        <span class="cred-verify">Verify credential <i class="fas fa-external-link-alt"></i></span>
       </div>
     </a>
     <a class="cred" href="https://drive.google.com/file/d/14zQ0bFp9a3IDUmVO-rTc7Za7eKOKL1WN/view" target="_blank">
@@ -820,7 +836,7 @@
       <div class="cred-info">
         <h4>Network Technician Career Path</h4>
         <p class="cred-issuer">Cisco Networking Academy · 2023</p>
-        <a class="cred-verify" href="https://drive.google.com/file/d/14zQ0bFp9a3IDUmVO-rTc7Za7eKOKL1WN/view" target="_blank">View credential <i class="fas fa-external-link-alt"></i></a>
+        <span class="cred-verify">View credential <i class="fas fa-external-link-alt"></i></span>
       </div>
     </a>
   </div>
