@@ -25,6 +25,13 @@
       --ac-g:   rgba(59,158,255,.28);
       --am:     #F5A623;
       --am-d:   rgba(245,166,35,.10);
+      --am-b:   rgba(245,166,35,.30);
+      --crit:   #FF6B5C;
+      --crit-d: rgba(255,107,92,.10);
+      --crit-b: rgba(255,107,92,.32);
+      --emb:    #8792AC;
+      --emb-d:  rgba(135,146,172,.10);
+      --emb-b:  rgba(135,146,172,.30);
       --tl:     #22D3A5;
       --tl-d:   rgba(34,211,165,.10);
       --r:      8px;
@@ -35,7 +42,13 @@
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior: smooth; }
     body {
-      background: var(--bg);
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(900px 480px at 10% -8%, rgba(59,158,255,.10), transparent 60%),
+        radial-gradient(760px 420px at 100% 6%, rgba(255,107,92,.05), transparent 55%),
+        radial-gradient(circle, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: auto, auto, 28px 28px;
+      background-repeat: no-repeat, no-repeat, repeat;
       color: var(--tx);
       font-family: 'Inter', system-ui, sans-serif;
       line-height: 1.65;
@@ -267,7 +280,9 @@
     }
     .card-icon {
       width: 44px; height: 44px;
-      background: var(--ac-d); border-radius: var(--r);
+      background: linear-gradient(135deg, var(--ac-d), rgba(59,158,255,.02));
+      border: 1px solid var(--ac-g);
+      border-radius: var(--r);
       display: flex; align-items: center; justify-content: center;
       font-size: 1rem; color: var(--ac); margin-bottom: 18px;
     }
@@ -293,22 +308,33 @@
     .cve-wrap {
       background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
     }
+    .cve-stack { display:flex; flex-direction:column; gap:20px; }
+
     .cve-card {
+      --accent: var(--am);
+      --accent-d: var(--am-d);
+      --accent-border: var(--am-b);
       background: var(--bg2);
-      border: 1px solid rgba(245,166,35,.32);
+      border: 1px solid var(--accent-border);
       border-radius: var(--r2); padding: 36px 40px;
       display: grid;
       grid-template-columns: 110px 1fr;
       gap: 36px; align-items: start;
-      box-shadow: 0 0 48px rgba(245,166,35,.04), 0 0 0 1px rgba(245,166,35,.06);
+      box-shadow: 0 0 48px var(--accent-d), 0 0 0 1px var(--accent-border);
+      transition: border-color .22s, box-shadow .22s, transform .22s;
     }
+    .cve-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.4), 0 0 0 1px var(--accent-border);
+    }
+    .cve-card.embargo { border-style: dashed; }
 
     .cve-badge-col {
       display: flex; flex-direction: column;
       align-items: center; gap: 8px;
     }
     .cve-sev {
-      background: var(--am); color: #000;
+      background: var(--accent); color: #000;
       font-family: 'JetBrains Mono', monospace;
       font-size: .68rem; font-weight: 700;
       padding: 3px 10px; border-radius: 4px;
@@ -317,7 +343,7 @@
     .cve-lpe {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 2.4rem; font-weight: 700;
-      color: var(--am); line-height: 1; letter-spacing: -2px;
+      color: var(--accent); line-height: 1; letter-spacing: -2px;
     }
     .cve-lpe-sub { font-size: .68rem; color: var(--tx3); text-transform:uppercase; letter-spacing:.6px; }
     .cve-pending {
@@ -330,10 +356,11 @@
       font-size: 1.28rem; font-weight: 700;
       letter-spacing: -.4px; margin-bottom: 10px;
     }
+    .cve-card.embargo .cve-content h3 i { color: var(--accent); margin-right:9px; font-size:.82em; }
     .cve-meta { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; align-items:center; }
     .cve-tag {
-      background: var(--am-d); border: 1px solid rgba(245,166,35,.22);
-      color: var(--am); padding: 3px 10px; border-radius: 4px;
+      background: var(--accent-d); border: 1px solid var(--accent-border);
+      color: var(--accent); padding: 3px 10px; border-radius: 4px;
       font-size: .73rem; font-family: 'JetBrains Mono', monospace; font-weight:500;
     }
     .cve-content > p { color: var(--tx2); font-size: .88rem; line-height: 1.72; margin-bottom: 16px; }
@@ -346,14 +373,20 @@
     }
     .cve-dl dt {
       font-family: 'JetBrains Mono', monospace;
-      color: var(--am); font-size: .72rem; padding-top:1px;
+      color: var(--accent); font-size: .72rem; padding-top:1px;
     }
     .cve-dl dd { color: var(--tx2); }
 
+    .redacted {
+      background: var(--tx3); color: transparent;
+      border-radius: 3px; padding: 1px 10px;
+      user-select: none; letter-spacing: 2px;
+    }
+
     .incibe-pill {
       display: inline-flex; align-items: center; gap: 7px;
-      background: var(--am-d); border: 1px solid rgba(245,166,35,.22);
-      color: var(--am); padding: 6px 14px; border-radius: var(--r);
+      background: var(--accent-d); border: 1px solid var(--accent-border);
+      color: var(--accent); padding: 6px 14px; border-radius: var(--r);
       font-size: .78rem; font-family: 'JetBrains Mono', monospace;
       margin-top: 16px;
     }
@@ -542,7 +575,7 @@
       <div>&nbsp;&nbsp;<span class="t-key">"certifications"</span> <span class="t-brace">:</span> <span class="t-str">"OSCP+ · eJPTv2"</span><span class="t-brace">,</span></div>
       <div>&nbsp;&nbsp;<span class="t-key">"machines_pwned" </span> <span class="t-brace">:</span> <span class="t-val">200+</span><span class="t-brace">,</span></div>
       <div>&nbsp;&nbsp;<span class="t-key">"pentest_reports"</span> <span class="t-brace">:</span> <span class="t-val">70+</span><span class="t-brace">,</span></div>
-      <div>&nbsp;&nbsp;<span class="t-key">"cve_discovered" </span> <span class="t-brace">:</span> <span class="t-str">"1 (pending · INCIBE)"</span><span class="t-brace">,</span></div>
+      <div>&nbsp;&nbsp;<span class="t-key">"vulnerabilities"</span> <span class="t-brace">:</span> <span class="t-str">"3 (2 CVE pending · 1 embargoed)"</span><span class="t-brace">,</span></div>
       <div>&nbsp;&nbsp;<span class="t-key">"bug_bounty"     </span> <span class="t-brace">:</span> <span class="t-str">"HackerOne · Bugcrowd"</span><span class="t-brace">,</span></div>
       <div>&nbsp;&nbsp;<span class="t-key">"languages"      </span> <span class="t-brace">:</span> <span class="t-str">"ES · EN · IT"</span><span class="t-brace">,</span></div>
       <div>&nbsp;&nbsp;<span class="t-key">"status"         </span> <span class="t-brace">:</span> <span class="t-ok">"OPEN TO OPPORTUNITIES"</span></div>
@@ -565,8 +598,8 @@
       <div class="stat-label">Pentest Reports</div>
     </div>
     <div class="stat-item fi" style="transition-delay:.16s">
-      <div class="stat-num amber">1</div>
-      <div class="stat-label">CVE Discovered</div>
+      <div class="stat-num amber">3</div>
+      <div class="stat-label">Vulnerabilities Found</div>
     </div>
     <div class="stat-item fi" style="transition-delay:.24s">
       <div class="stat-num">3</div>
@@ -633,42 +666,118 @@
   <section class="section">
     <div class="eyebrow">// Security Research</div>
     <h2 class="sec-title">Vulnerability Research</h2>
-    <p class="sec-sub">Independent discovery of a critical vulnerability in production software, managed through coordinated disclosure with INCIBE.</p>
+    <p class="sec-sub">Independent discovery of vulnerabilities in production software, each managed through coordinated disclosure with the vendor and INCIBE.</p>
 
-    <div class="cve-card fi">
-      <div class="cve-badge-col">
-        <span class="cve-sev">Critical</span>
-        <div class="cve-lpe">LPE</div>
-        <div class="cve-lpe-sub">Severity</div>
-        <div class="cve-pending">CVE<br/>PENDING</div>
+    <div class="cve-stack">
+
+      <div class="cve-card fi" style="--accent:var(--crit); --accent-d:var(--crit-d); --accent-border:var(--crit-b);">
+        <div class="cve-badge-col">
+          <span class="cve-sev">Critical · 9.3</span>
+          <div class="cve-lpe">LPE</div>
+          <div class="cve-lpe-sub">Severity</div>
+          <div class="cve-pending">CVE<br/>PENDING</div>
+        </div>
+
+        <div class="cve-content">
+          <h3>Local Privilege Escalation in Corporate Backup Software</h3>
+          <div class="cve-meta">
+            <span class="cve-tag">CWE-250</span>
+            <span class="cve-tag">CWE-269</span>
+            <span class="cve-tag">Privilege Escalation</span>
+            <span class="cve-tag">Independent Research · 2026</span>
+          </div>
+          <p>
+            Independently identified a critical Local Privilege Escalation vulnerability in a widely deployed corporate backup solution. The flaw allows a low-privileged user to escalate to SYSTEM on affected hosts, posing significant risk to enterprise environments where the software is widely deployed.
+          </p>
+          <dl class="cve-dl">
+            <dt>Status</dt>
+            <dd>Coordinated disclosure in progress — patch under development with vendor</dd>
+            <dt>Score</dt>
+            <dd>9.3 Critical (CVSS v4.0)</dd>
+            <dt>Vector</dt>
+            <dd>CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H</dd>
+            <dt>Process</dt>
+            <dd>Full CVD managed through INCIBE (Instituto Nacional de Ciberseguridad de España)</dd>
+            <dt>Reference</dt>
+            <dd>INCIBE Expediente INC-2026-0152</dd>
+            <dt>CVE Assignment</dt>
+            <dd>Pending — will be published upon coordinated public disclosure</dd>
+          </dl>
+          <div class="incibe-pill">
+            <i class="fas fa-shield-halved"></i>
+            Coordinated via INCIBE · Expediente INC-2026-0152
+          </div>
+        </div>
       </div>
 
-      <div class="cve-content">
-        <h3>Local Privilege Escalation in Corporate Backup Software</h3>
-        <div class="cve-meta">
-          <span class="cve-tag">CWE-250</span>
-          <span class="cve-tag">CWE-269</span>
-          <span class="cve-tag">Privilege Escalation</span>
-          <span class="cve-tag">Independent Research · 2026</span>
+      <div class="cve-card fi" style="--accent:var(--am); --accent-d:var(--am-d); --accent-border:var(--am-b); transition-delay:.08s">
+        <div class="cve-badge-col">
+          <span class="cve-sev">Medium · 6.3</span>
+          <div class="cve-lpe">XSS</div>
+          <div class="cve-lpe-sub">Severity</div>
+          <div class="cve-pending">CVE<br/>PENDING</div>
         </div>
-        <p>
-          Independently identified a critical Local Privilege Escalation vulnerability in a widely deployed corporate backup solution. The flaw allows a low-privileged user to escalate to SYSTEM on affected hosts, posing significant risk to enterprise environments where the software is widely deployed.
-        </p>
-        <dl class="cve-dl">
-          <dt>Status</dt>
-          <dd>Coordinated disclosure in progress — patch under development with vendor</dd>
-          <dt>Process</dt>
-          <dd>Full CVD managed through INCIBE (Instituto Nacional de Ciberseguridad de España)</dd>
-          <dt>Reference</dt>
-          <dd>INCIBE Expediente INC-2026-0152</dd>
-          <dt>CVE Assignment</dt>
-          <dd>Pending — will be published upon coordinated public disclosure</dd>
-        </dl>
-        <div class="incibe-pill">
-          <i class="fas fa-shield-halved"></i>
-          Coordinated via INCIBE · Expediente INC-2026-0152
+
+        <div class="cve-content">
+          <h3>Stored Cross-Site Scripting (XSS) via SVG File Upload Leading to Administrator Account Takeover</h3>
+          <div class="cve-meta">
+            <span class="cve-tag">CWE-79</span>
+            <span class="cve-tag">CWE-434</span>
+            <span class="cve-tag">CWE-352</span>
+            <span class="cve-tag">Independent Research · 2026</span>
+          </div>
+          <p>
+            Independently identified a stored Cross-Site Scripting vulnerability in an open-source restaurant management platform. A crafted SVG file bypasses upload validation and executes arbitrary JavaScript in an administrator's session; chained with a CSRF weakness in the account-management flow, this results in full takeover of the administrator account.
+          </p>
+          <dl class="cve-dl">
+            <dt>Impact</dt>
+            <dd>Full takeover of the administrative account</dd>
+            <dt>Vector</dt>
+            <dd>CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:A/VC:N/VI:N/VA:N/SC:H/SI:H/SA:H</dd>
+            <dt>Process</dt>
+            <dd>Full CVD managed through INCIBE (Instituto Nacional de Ciberseguridad de España)</dd>
+            <dt>Reference</dt>
+            <dd>INCIBE Expediente INC-2026-0161</dd>
+            <dt>CVE Assignment</dt>
+            <dd>Pending — will be published upon coordinated public disclosure</dd>
+          </dl>
+          <div class="incibe-pill">
+            <i class="fas fa-shield-halved"></i>
+            Coordinated via INCIBE · Expediente INC-2026-0161
+          </div>
         </div>
       </div>
+
+      <div class="cve-card embargo fi" style="--accent:var(--emb); --accent-d:var(--emb-d); --accent-border:var(--emb-b); transition-delay:.16s">
+        <div class="cve-badge-col">
+          <span class="cve-sev">Embargoed</span>
+          <div class="cve-lpe">RCE</div>
+          <div class="cve-lpe-sub">Status</div>
+          <div class="cve-pending">DETAILS<br/>WITHHELD</div>
+        </div>
+
+        <div class="cve-content">
+          <h3><i class="fas fa-lock"></i>Remote Code Execution — Vendor Withheld Pending Disclosure</h3>
+          <div class="cve-meta">
+            <span class="cve-tag">Remote Code Execution</span>
+            <span class="cve-tag">Under Embargo · 2026</span>
+          </div>
+          <p>
+            Identified during independent research. Product, technical details, and severity scoring are withheld while disclosure is coordinated directly with the vendor — nothing further will be published until a fix is confirmed and public disclosure is agreed.
+          </p>
+          <dl class="cve-dl">
+            <dt>Product</dt>
+            <dd><span class="redacted">REDACTED</span> — withheld pending disclosure</dd>
+            <dt>Status</dt>
+            <dd>In direct contact with the vendor — fix in development</dd>
+            <dt>Process</dt>
+            <dd>Additional coordination requested through INCIBE — response pending</dd>
+            <dt>Public Disclosure</dt>
+            <dd>Full write-up to follow once a fix is released</dd>
+          </dl>
+        </div>
+      </div>
+
     </div>
   </section>
 </div>
