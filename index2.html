@@ -578,7 +578,7 @@
       <div>&nbsp;&nbsp;<span class="t-key">"certifications"</span> <span class="t-brace">:</span> <span class="t-str">"OSCP+ · eJPTv2"</span><span class="t-brace">,</span></div>
       <div>&nbsp;&nbsp;<span class="t-key">"machines_pwned" </span> <span class="t-brace">:</span> <span class="t-val">200+</span><span class="t-brace">,</span></div>
       <div>&nbsp;&nbsp;<span class="t-key">"pentest_reports"</span> <span class="t-brace">:</span> <span class="t-val">70+</span><span class="t-brace">,</span></div>
-      <div>&nbsp;&nbsp;<span class="t-key">"vulnerabilities"</span> <span class="t-brace">:</span> <span class="t-str">"4 (2 CVE pending · 2 embargoed)"</span><span class="t-brace">,</span></div>
+      <div>&nbsp;&nbsp;<span class="t-key">"vulnerabilities"</span> <span class="t-brace">:</span> <span class="t-str">"3 (2 CVE pending · 1 embargoed)"</span><span class="t-brace">,</span></div>
       <div>&nbsp;&nbsp;<span class="t-key">"bug_bounty"     </span> <span class="t-brace">:</span> <span class="t-str">"HackerOne · Bugcrowd"</span><span class="t-brace">,</span></div>
       <div>&nbsp;&nbsp;<span class="t-key">"languages"      </span> <span class="t-brace">:</span> <span class="t-str">"ES · EN · IT"</span><span class="t-brace">,</span></div>
       <div>&nbsp;&nbsp;<span class="t-key">"status"         </span> <span class="t-brace">:</span> <span class="t-ok">"OPEN TO OPPORTUNITIES"</span></div>
@@ -601,7 +601,7 @@
       <div class="stat-label">Pentest Reports</div>
     </div>
     <div class="stat-item fi" style="transition-delay:.16s">
-      <div class="stat-num amber">4</div>
+      <div class="stat-num amber">3</div>
       <div class="stat-label">Vulnerabilities Found</div>
     </div>
     <div class="stat-item fi" style="transition-delay:.24s">
@@ -790,46 +790,6 @@
           <div class="incibe-pill">
             <i class="fas fa-shield-halved"></i>
             Coordinated via INCIBE · Expediente INC-2026-0168
-          </div>
-        </div>
-      </div>
-
-      <div class="cve-card embargo fi" style="--accent:var(--high); --accent-d:var(--high-d); --accent-border:var(--high-b); transition-delay:.24s">
-        <div class="cve-badge-col">
-          <span class="cve-sev">High · 8.7</span>
-          <div class="cve-lpe">ENV</div>
-          <div class="cve-lpe-sub">Severity</div>
-          <div class="cve-pending">VENDOR<br/>WITHHELD</div>
-        </div>
-
-        <div class="cve-content">
-          <h3><i class="fas fa-lock"></i>Unauthenticated Disclosure of Sensitive Configuration Data (.env) via Broken Access Control</h3>
-          <div class="cve-meta">
-            <span class="cve-tag">CWE-538</span>
-            <span class="cve-tag">Under Embargo · 2026</span>
-          </div>
-          <p>
-            Identified an information disclosure vulnerability in a gym management platform: a misconfigured access-control file, written in syntax unsupported by the deployed web server, allowed unauthenticated remote access to a sensitive environment configuration file, exposing database and SMTP credentials. Vendor and product name are withheld while disclosure is coordinated directly with them.
-          </p>
-          <dl class="cve-dl">
-            <dt>Product</dt>
-            <dd>Gym Management Software — vendor <span class="redacted">WITHHELD</span></dd>
-            <dt>Score</dt>
-            <dd>8.7 High (CVSS v4.0)</dd>
-            <dt>Vector</dt>
-            <dd>CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N</dd>
-            <dt>Status</dt>
-            <dd>Reported directly to the vendor with a full technical report and PoC — awaiting reproduction confirmation</dd>
-            <dt>Process</dt>
-            <dd>INCIBE copied to support coordinated disclosure</dd>
-            <dt>Reference</dt>
-            <dd>INCIBE Expediente INC-2026-0175</dd>
-            <dt>Public Disclosure</dt>
-            <dd>Full write-up to follow once a fix is released</dd>
-          </dl>
-          <div class="incibe-pill">
-            <i class="fas fa-shield-halved"></i>
-            Coordinated via INCIBE · Expediente INC-2026-0175
           </div>
         </div>
       </div>
