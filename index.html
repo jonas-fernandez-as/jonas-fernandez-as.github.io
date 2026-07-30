@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jonas Fernandez — Cybersecurity Associate & Vulnerability Researcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    /* ── DESIGN TOKENS ───────────────────────────────────────────── */
+    :root {
+      --bg:     #070B14;
+      --bg2:    #0C1220;
+      --bg3:    #111827;
+      --bd:     #1C2A3F;
+      --bd-hi:  rgba(59,158,255,.45);
+      --tx:     #DDE6F5;
+      --tx2:    #6E87A8;
+      --tx3:    #3E5272;
+      --ac:     #3B9EFF;
+      --ac-d:   rgba(59,158,255,.10);
+      --ac-g:   rgba(59,158,255,.28);
+      --ac-hover: #2a8af0;
+      --am:     #F5A623;
+      --am-d:   rgba(245,166,35,.10);
+      --am-b:   rgba(245,166,35,.30);
+      --crit:   #FF6B5C;
+      --crit-d: rgba(255,107,92,.10);
+      --crit-b: rgba(255,107,92,.32);
+      --high:   #FF4D4D;
+      --high-d: rgba(255,77,77,.10);
+      --high-b: rgba(255,77,77,.32);
+      --emb:    #8792AC;
+      --emb-d:  rgba(135,146,172,.10);
+      --emb-b:  rgba(135,146,172,.30);
+      --tl:     #22D3A5;
+      --tl-d:   rgba(34,211,165,.10);
+      --redact: #3E5272;
+      --dot:    rgba(255,255,255,.035);
+      --glow1:  rgba(59,158,255,.10);
+      --glow2:  rgba(255,107,92,.05);
+      --shadow: rgba(0,0,0,.45);
+      --nav-bg: rgba(7,11,20,.88);
+      --r:      8px;
+      --r2:     12px;
+    }
+    [data-theme="light"] {
+      --bg:     #F4F7FB;
+      --bg2:    #FFFFFF;
+      --bg3:    #EEF2F8;
+      --bd:     #DCE3EE;
+      --bd-hi:  rgba(37,99,235,.4);
+      --tx:     #101828;
+      --tx2:    #4B5B76;
+      --tx3:    #8697AF;
+      --ac:     #2563EB;
+      --ac-d:   rgba(37,99,235,.08);
+      --ac-g:   rgba(37,99,235,.25);
+      --ac-hover: #1D4ED8;
+      --am:     #B8790C;
+      --am-d:   rgba(184,121,12,.10);
+      --am-b:   rgba(184,121,12,.30);
+      --crit:   #D9483A;
+      --crit-d: rgba(217,72,58,.08);
+      --crit-b: rgba(217,72,58,.30);
+      --high:   #D93A3A;
+      --high-d: rgba(217,58,58,.08);
+      --high-b: rgba(217,58,58,.30);
+      --emb:    #5B6B85;
+      --emb-d:  rgba(91,107,133,.08);
+      --emb-b:  rgba(91,107,133,.28);
+      --tl:     #0E9C79;
+      --tl-d:   rgba(14,156,121,.10);
+      --redact: #334155;
+      --dot:    rgba(16,24,40,.05);
+      --glow1:  rgba(37,99,235,.07);
+      --glow2:  rgba(217,72,58,.04);
+      --shadow: rgba(100,116,139,.18);
+      --nav-bg: rgba(244,247,251,.85);
+    }
+
+    /* ── RESET ───────────────────────────────────────────────────── */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(900px 480px at 10% -8%, var(--glow1), transparent 60%),
+        radial-gradient(760px 420px at 100% 6%, var(--glow2), transparent 55%),
+        radial-gradient(circle, var(--dot) 1px, transparent 1px);
+      background-size: auto, auto, 28px 28px;
+      background-repeat: no-repeat, no-repeat, repeat;
+      color: var(--tx);
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color .25s ease, color .25s ease;
+    }
+
+    /* ── NAVBAR ──────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 200;
+      background: var(--nav-bg);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--bd);
+      transition: background-color .25s ease, border-color .25s ease;
+    }
+    .nav-inner {
+      max-width: 1140px; margin: 0 auto;
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 58px;
+    }
+    .nav-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .9rem; font-weight: 500;
+      color: var(--tx); text-decoration: none; letter-spacing: -.3px;
+    }
+    .nav-logo span { color: var(--ac); }
+    .nav-links { display:flex; gap:2px; list-style:none; }
+    .nav-links a {
+      color: var(--tx2); text-decoration: none;
+      padding: 7px 14px; border-radius: var(--r);
+      font-size: .85rem; font-weight: 500;
+      transition: color .18s, background .18s;
+    }
+    .nav-links a:hover { color: var(--ac); background: var(--ac-d); }
+    .nav-links a i { margin-right: 5px; font-size: .78rem; }
+
+    .nav-right { display:flex; align-items:center; gap:18px; }
+    .nav-controls { display:flex; align-items:center; gap:8px; }
+    .icon-btn {
+      background: var(--bg2); border: 1px solid var(--bd);
+      color: var(--tx2); min-width: 34px; height: 34px; padding: 0 10px;
+      border-radius: var(--r);
+      display: flex; align-items:center; justify-content:center; gap:5px;
+      cursor: pointer; font-size:.76rem; font-weight:700;
+      font-family:'JetBrains Mono', monospace; letter-spacing:.4px;
+      transition: border-color .18s, color .18s, background .18s;
+    }
+    .icon-btn:hover { border-color: var(--bd-hi); color: var(--ac); background: var(--ac-d); }
+    .icon-btn i { font-size: .82rem; }
+
+    /* ── HERO ────────────────────────────────────────────────────── */
+    .hero {
+      max-width: 1140px; margin: 0 auto;
+      padding: 88px 24px 72px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 56px;
+      align-items: center;
+    }
+
+    .hero-avatar {
+      width: 180px; height: 180px;
+      border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--bd);
+      margin-bottom: 22px;
+      display: block;
+    }
+
+    .hero-avail {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--tl-d);
+      color: var(--tl);
+      border: 1px solid rgba(34,211,165,.25);
+      padding: 5px 14px; border-radius: 20px;
+      font-size: .75rem; font-weight: 600;
+      letter-spacing: .5px; text-transform: uppercase;
+      margin-bottom: 20px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .hero-avail::before {
+      content: '';
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--tl);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:.4; transform:scale(.8); }
+    }
+
+    .hero-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3.8rem; font-weight: 700;
+      letter-spacing: -2.5px; line-height: 1.06;
+      margin-bottom: 8px;
+    }
+    .hero-name span { color: var(--ac); }
+
+    .hero-rule {
+      width: 52px; height: 3px;
+      background: var(--ac); border-radius: 2px;
+      margin: 14px 0 18px;
+    }
+
+    .hero-sub {
+      color: var(--tx2);
+      font-size: 1.03rem; font-weight: 400;
+      margin-bottom: 26px; max-width: 430px;
+      line-height: 1.6;
+    }
+
+    .hero-pills { display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 32px; }
+    .pill {
+      background: var(--bg2); border: 1px solid var(--bd);
+      padding: 6px 14px; border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem; font-weight: 500; color: var(--tx);
+      display: flex; align-items: center; gap: 7px;
+    }
+    .pill i { color: var(--ac); font-size: .72rem; }
+
+    .hero-cta { display:flex; flex-wrap:wrap; gap:10px; }
+
+    .btn-ac {
+      background: var(--ac); color: #fff;
+      padding: 11px 24px; border-radius: var(--r);
+      font-weight: 600; font-size: .88rem; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 7px;
+      transition: background .18s, transform .18s, box-shadow .18s;
+    }
+    .btn-ac:hover { background: var(--ac-hover); transform: translateY(-2px); box-shadow: 0 6px 20px var(--ac-g); }
+
+    .btn-ghost {
+      background: transparent; color: var(--tx);
+      border: 1px solid var(--bd);
+      padding: 11px 24px; border-radius: var(--r);
+      font-weight: 600; font-size: .88rem; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 7px;
+      transition: border-color .18s, color .18s, background .18s;
+    }
+    .btn-ghost:hover { border-color: var(--ac); color: var(--ac); background: var(--ac-d); }
+
+    /* ── TERMINAL BOX ────────────────────────────────────────────── */
+    .terminal {
+      background: var(--bg2);
+      border: 1px solid var(--bd);
+      border-radius: var(--r2);
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(59,158,255,.06), 0 28px 72px var(--shadow);
+      transition: background-color .25s ease, border-color .25s ease;
+    }
+    .term-bar {
+      background: var(--bg3);
+      border-bottom: 1px solid var(--bd);
+      padding: 10px 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .term-dots { display:flex; gap:6px; }
+    .term-dot  { width:10px; height:10px; border-radius:50%; }
+    .dot-r { background:#FF5F57; }
+    .dot-y { background:#FEBC2E; }
+    .dot-g { background:#28C840; }
+    .term-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .73rem; color: var(--tx3); margin-left: 4px;
+    }
+    .term-body {
+      padding: 20px 22px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .81rem; line-height: 1.85;
+    }
+    .t-prompt { color: var(--tl); }
+    .t-cmd    { color: var(--tx); }
+    .t-key    { color: var(--tx2); }
+    .t-val    { color: var(--ac); font-weight: 500; }
+    .t-str    { color: var(--am); }
+    .t-brace  { color: var(--tx3); }
+    .t-ok     { color: var(--tl); }
+    .t-link   { color: var(--ac); text-decoration: none; }
+    .t-link:hover { text-decoration: underline; }
+
+    /* ── STATS STRIP ─────────────────────────────────────────────── */
+    .stats-wrap {
+      border-top: 1px solid var(--bd);
+      border-bottom: 1px solid var(--bd);
+      background: var(--bg2);
+      transition: background-color .25s ease, border-color .25s ease;
+    }
+    .stats-inner {
+      max-width: 1140px; margin: 0 auto; padding: 0 24px;
+      display: grid; grid-template-columns: repeat(4,1fr);
+    }
+    .stat-item {
+      padding: 32px 24px;
+      border-right: 1px solid var(--bd);
+      text-align: center;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.6rem; font-weight: 700;
+      color: var(--ac); letter-spacing: -2px;
+      line-height: 1; margin-bottom: 6px;
+    }
+    .stat-num.amber { color: var(--am); }
+    .stat-label {
+      font-size: .75rem; color: var(--tx2); font-weight: 500;
+      text-transform: uppercase; letter-spacing: .8px;
+    }
+
+    /* ── GENERIC SECTION ─────────────────────────────────────────── */
+    .section {
+      max-width: 1140px; margin: 0 auto; padding: 72px 24px;
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .73rem; color: var(--ac);
+      text-transform: uppercase; letter-spacing: 1.5px;
+      margin-bottom: 10px;
+    }
+    .sec-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem; font-weight: 700;
+      letter-spacing: -.8px; margin-bottom: 10px;
+    }
+    .sec-sub {
+      color: var(--tx2); font-size: .95rem;
+      margin-bottom: 40px; max-width: 560px;
+    }
+
+    /* ── CARDS ───────────────────────────────────────────────────── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 20px;
+    }
+    .card {
+      background: var(--bg2); border: 1px solid var(--bd);
+      border-radius: var(--r2); padding: 28px;
+      transition: border-color .22s, transform .22s, box-shadow .22s, background-color .25s ease;
+    }
+    .card:hover {
+      border-color: var(--bd-hi);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(0,0,0,.45), 0 0 0 1px rgba(59,158,255,.07);
+    }
+    .card-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--ac-d), rgba(59,158,255,.02));
+      border: 1px solid var(--ac-g);
+      border-radius: var(--r);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: var(--ac); margin-bottom: 18px;
+    }
+    .card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem; font-weight: 600;
+      margin-bottom: 10px; letter-spacing: -.3px;
+    }
+    .card p { color: var(--tx2); font-size: .87rem; line-height: 1.72; }
+    .card-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:18px; }
+    .tag {
+      background: var(--bg3); border: 1px solid var(--bd);
+      padding: 3px 10px; border-radius: 4px;
+      font-size: .71rem; font-family: 'JetBrains Mono', monospace;
+      color: var(--tx2);
+    }
+
+    /* ── DIVIDER ─────────────────────────────────────────────────── */
+    .divider { height:1px; background:var(--bd); max-width:1140px; margin:0 auto; }
+    .divider-full { height:1px; background:var(--bd); }
+
+    /* ── CVE SECTION ─────────────────────────────────────────────── */
+    .cve-wrap {
+      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+    }
+    .cve-stack { display:flex; flex-direction:column; gap:20px; }
+
+    .cve-card {
+      --accent: var(--am);
+      --accent-d: var(--am-d);
+      --accent-border: var(--am-b);
+      background: var(--bg2);
+      border: 1px solid var(--accent-border);
+      border-radius: var(--r2); padding: 36px 40px;
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 36px; align-items: start;
+      box-shadow: 0 0 48px var(--accent-d), 0 0 0 1px var(--accent-border);
+      transition: border-color .22s, box-shadow .22s, transform .22s, background-color .25s ease;
+    }
+    .cve-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.4), 0 0 0 1px var(--accent-border);
+    }
+    .cve-card.embargo { border-style: dashed; }
+
+    .cve-badge-col {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+    }
+    .cve-sev {
+      background: var(--accent); color: #000;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .68rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 4px;
+      letter-spacing: .8px; text-transform: uppercase;
+    }
+    .cve-lpe {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.4rem; font-weight: 700;
+      color: var(--accent); line-height: 1; letter-spacing: -2px;
+    }
+    .cve-lpe-sub { font-size: .68rem; color: var(--tx3); text-transform:uppercase; letter-spacing:.6px; }
+    .cve-pending {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .67rem; color: var(--tx3); text-align:center; line-height:1.4;
+    }
+
+    .cve-content h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.28rem; font-weight: 700;
+      letter-spacing: -.4px; margin-bottom: 10px;
+    }
+    .cve-card.embargo .cve-content h3 i { color: var(--accent); margin-right:9px; font-size:.82em; }
+    .cve-meta { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; align-items:center; }
+    .cve-tag {
+      background: var(--accent-d); border: 1px solid var(--accent-border);
+      color: var(--accent); padding: 3px 10px; border-radius: 4px;
+      font-size: .73rem; font-family: 'JetBrains Mono', monospace; font-weight:500;
+    }
+    .cve-content > p { color: var(--tx2); font-size: .88rem; line-height: 1.72; margin-bottom: 16px; }
+
+    .cve-dl {
+      background: var(--bg3); border: 1px solid var(--bd);
+      border-radius: var(--r); padding: 16px 20px;
+      font-size: .84rem; line-height: 1.7;
+      display: grid; grid-template-columns: 160px 1fr; row-gap: 6px;
+    }
+    .cve-dl dt {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent); font-size: .72rem; padding-top:1px;
+    }
+    .cve-dl dd { color: var(--tx2); }
+
+    .redacted {
+      background: var(--redact); color: transparent;
+      border-radius: 3px; padding: 1px 10px;
+      user-select: none; letter-spacing: 2px;
+    }
+
+    .incibe-pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--accent-d); border: 1px solid var(--accent-border);
+      color: var(--accent); padding: 6px 14px; border-radius: var(--r);
+      font-size: .78rem; font-family: 'JetBrains Mono', monospace;
+      margin-top: 16px;
+    }
+
+    /* ── CREDENTIALS ─────────────────────────────────────────────── */
+    .creds {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 16px;
+    }
+    .cred {
+      background: var(--bg2); border: 1px solid var(--bd);
+      border-radius: var(--r2); padding: 22px 24px;
+      text-decoration: none; color: var(--tx);
+      display: flex; align-items: center; gap: 18px;
+      transition: border-color .2s, box-shadow .2s, transform .2s, background-color .25s ease;
+    }
+    .cred:hover {
+      border-color: var(--bd-hi); transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    }
+    .cred-ic {
+      width: 48px; height: 48px;
+      background: var(--ac-d); border-radius: var(--r);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem; color: var(--ac); flex-shrink:0;
+    }
+    .cred-info h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem; font-weight: 600; margin-bottom: 3px;
+    }
+    .cred-issuer { color: var(--tx2); font-size: .82rem; margin-bottom: 6px; }
+    .cred-verify {
+      display: inline-flex; align-items: center; gap: 5px;
+      color: var(--tl); font-size: .76rem; font-weight: 600;
+      font-family: 'JetBrains Mono', monospace; text-decoration:none;
+    }
+    .cred-verify i { font-size: .66rem; }
+    .cred-badge-status {
+      display: inline-block;
+      font-size: .68rem; font-family: 'JetBrains Mono', monospace;
+      padding: 2px 8px; border-radius: 4px; margin-top: 4px;
+      font-weight: 600; text-transform: uppercase;
+    }
+    .status-progress { background: var(--am-d); color: var(--am); border: 1px solid var(--am-b); }
+    .status-upcoming { background: var(--ac-d); color: var(--ac); border: 1px solid var(--ac-g); }
+
+    /* ── REPORTS ─────────────────────────────────────────────────── */
+    .toggle-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 26px;
+      background: var(--ac); color: #fff;
+      border-radius: var(--r); font-weight: 600;
+      cursor: pointer; border: none;
+      font-size: .9rem; font-family: 'Inter', sans-serif;
+      transition: background .18s, transform .18s;
+      margin-bottom: 24px;
+    }
+    .toggle-btn:hover { background: var(--ac-hover); transform: translateY(-1px); }
+
+    .reports-grid { display:none; grid-template-columns: repeat(auto-fill,minmax(168px,1fr)); gap:8px; }
+    .reports-grid.open { display:grid; }
+
+    .report-item {
+      background: var(--bg2); border: 1px solid var(--bd);
+      border-radius: var(--r); padding: 11px 15px;
+      text-decoration: none; color: var(--tx2);
+      font-size: .83rem; font-weight: 500;
+      display: flex; align-items: center; gap: 9px;
+      transition: border-color .18s, color .18s, background .18s;
+    }
+    .report-item:hover { border-color: var(--bd-hi); color: var(--ac); background: var(--ac-d); }
+    .report-item i { color: var(--ac); font-size: .75rem; flex-shrink:0; }
+
+    /* ── CONTACT ─────────────────────────────────────────────────── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 14px;
+    }
+    .contact-card {
+      background: var(--bg2); border: 1px solid var(--bd);
+      border-radius: var(--r2); padding: 26px 20px;
+      text-decoration: none; color: var(--tx);
+      display: flex; flex-direction: column; align-items: center;
+      gap: 10px; text-align: center;
+      transition: border-color .2s, transform .2s, box-shadow .2s, background-color .25s ease;
+    }
+    .contact-card:hover {
+      border-color: var(--bd-hi); transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    }
+    .contact-card i { font-size: 1.5rem; color: var(--ac); }
+    .contact-card h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .95rem; font-weight: 600;
+    }
+    .contact-card span { font-size: .78rem; color: var(--tx2); }
+
+    /* ── FOOTER ────────────────────────────────────────────────    */
+    footer {
+      text-align: center; padding: 28px 24px;
+      color: var(--tx3); font-size: .78rem;
+      border-top: 1px solid var(--bd);
+    }
+
+    /* ── SCROLL FADE ─────────────────────────────────────────────── */
+    .fi {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .fi.visible { opacity:1; transform:none; }
+
+    /* ── RESPONSIVE ────────────────────────────────________________ */
+    @media (max-width: 1000px) {
+      .hero { grid-template-columns: 1fr; }
+      .terminal { display:none; }
+      .cards { grid-template-columns: 1fr; }
+      .creds { grid-template-columns: 1fr; }
+      .cve-card { grid-template-columns: 1fr; }
+      .cve-badge-col { flex-direction:row; align-items:center; flex-wrap:wrap; justify-content:flex-start; gap:12px; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); }
+      .stat-item:nth-child(2) { border-right:none; }
+      .stat-item:nth-child(3) { border-top:1px solid var(--bd); }
+      .contact-grid { grid-template-columns: repeat(2,1fr); }
+      .cve-dl { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .hero-name { font-size: 2.8rem; letter-spacing:-1.8px; }
+      .hero { padding: 56px 20px 48px; }
+      .nav-links a span { display:none; }
+      .nav-links a i { margin-right:0; }
+      .nav-links a { padding: 7px 10px; }
+      .cve-card { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="https://jonas-fernandez-as.github.io" class="nav-logo" target="_blank">jf_<span>security</span></a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#about"><i class="fas fa-user"></i><span data-i18n="nav-about">About</span></a></li>
+        <li><a href="#research"><i class="fas fa-bug"></i><span data-i18n="nav-cve">CVE</span></a></li>
+        <li><a href="#creds"><i class="fas fa-certificate"></i><span data-i18n="nav-certs">Certs</span></a></li>
+        <li><a href="#reports"><i class="fas fa-folder"></i><span data-i18n="nav-reports">Reports</span></a></li>
+        <li><a href="#contact"><i class="fas fa-paper-plane"></i><span data-i18n="nav-contact">Contact</span></a></li>
+      </ul>
+      <div class="nav-controls">
+        <button class="icon-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark" aria-label="Toggle light and dark mode">
+          <i class="fas fa-sun"></i>
+        </button>
+        <button class="icon-btn" id="langToggle" onclick="toggleLang()" title="Switch language" aria-label="Switch language">ES</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────────────────────── -->
+<section class="hero" id="about">
+
+  <div class="hero-left fi">
+    <img src="images/me.png" alt="Jonas Fernandez" class="hero-avatar" />
+    <div class="hero-avail" data-i18n="hero-avail">Available for opportunities</div>
+    <h1 class="hero-name">Jonas<br /><span>Fernandez</span></h1>
+    <div class="hero-rule"></div>
+    <p class="hero-sub" data-i18n="hero-sub">
+      Cybersecurity Associate & Vulnerability Researcher.<br />
+      Offensive tradecraft applied to build bulletproof defense.
+    </p>
+    <div class="hero-pills">
+      <div class="pill"><i class="fas fa-shield-virus"></i> OSCP+</div>
+      <div class="pill"><i class="fas fa-crosshairs"></i> eJPTv2</div>
+      <div class="pill"><i class="fas fa-shield-alt"></i> Blue/Red Focus</div>
+      <div class="pill"><i class="fas fa-bug"></i> <span data-i18n="pill-researcher">CVE Researcher</span></div>
+    </div>
+    <div class="hero-cta">
+      <a href="#reports" class="btn-ac"><i class="fas fa-folder-open"></i> <span data-i18n="cta-reports">View Reports</span></a>
+      <a href="cv/Jonas-Fernandez-Curriculum.pdf" class="btn-ghost" target="_blank"><i class="fas fa-file-lines"></i> <span data-i18n="cta-cv">CV / Resume</span></a>
+      <a href="mailto:jonas.ezequiel.fernandez.munoz@gmail.com" class="btn-ghost"><i class="fas fa-envelope"></i> <span data-i18n="cta-contact">Get In Touch</span></a>
+    </div>
+  </div>
+
+  <div class="terminal fi" style="transition-delay:.16s">
+    <div class="term-bar">
+      <div class="term-dots">
+        <div class="term-dot dot-r"></div>
+        <div class="term-dot dot-y"></div>
+        <div class="term-dot dot-g"></div>
+      </div>
+      <span class="term-title">profile.sh — jonas@security</span>
+    </div>
+    <div class="term-body">
+      <div><span class="t-prompt">jonas@portfolio</span><span class="t-cmd">:~$ whoami</span></div>
+      <div style="color:var(--tx2);margin-bottom:14px" data-i18n="term-whoami-sub">Cybersecurity Associate & Vulnerability Researcher</div>
+
+      <div><span class="t-prompt">jonas@portfolio</span><span class="t-cmd">:~$ cat profile.json</span></div>
+      <div><span class="t-brace">{</span></div>
+      <div>&nbsp;&nbsp;<span class="t-key">"role"</span>           <span class="t-brace">:</span> <span class="t-str" data-i18n="term-role">"Cybersecurity Associate & Vulnerability Researcher"</span><span class="t-brace">,</span></div>
+      <div>&nbsp;&nbsp;<span class="t-key">"focus"</span>          <span class="t-brace">:</span> <span class="t-str" data-i18n="term-focus">"Attack-driven Defense & Detection Engineering"</span><span class="t-brace">,</span></div>
+      <div>&nbsp;&nbsp;<span class="t-key">"certifications"</span> <span class="t-brace">:</span> <span class="t-str" data-i18n="term-certs">"OSCP+ · eJPTv2 · CRTO (In Progress)"</span><span class="t-brace">,</span></div>
+      <div>&nbsp;&nbsp;<span class="t-key">"machines_pwned" </span> <span class="t-brace">:</span> <span class="t-val">200+</span><span class="t-brace">,</span></div>
+      <div>&nbsp;&nbsp;<span class="t-key">"vulnerabilities"</span> <span class="t-brace">:</span> <span class="t-str">"CVE-2026-14856 &amp; more"</span><span class="t-brace">,</span></div>
+      <div>&nbsp;&nbsp;<span class="t-key">"status"         </span> <span class="t-brace">:</span> <span class="t-ok" data-i18n="term-status">"OPEN TO OPPORTUNITIES"</span></div>
+      <div><span class="t-brace">}</span></div>
+      <div style="margin-top:14px;color:var(--tx3)">&gt; <span class="t-ok">✓</span> portfolio: <a class="t-link" href="https://jonas-fernandez-as.github.io" target="_blank">jonas-fernandez-as.github.io</a></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ── STATS STRIP ────────────────────────────────────────────────── -->
+<div class="stats-wrap">
+  <div class="stats-inner">
+    <div class="stat-item fi">
+      <div class="stat-num">200+</div>
+      <div class="stat-label" data-i18n="stat-machines">Machines Compromised</div>
+    </div>
+    <div class="stat-item fi" style="transition-delay:.08s">
+      <div class="stat-num">70+</div>
+      <div class="stat-label" data-i18n="stat-reports">Pentest Reports</div>
+    </div>
+    <div class="stat-item fi" style="transition-delay:.16s">
+      <div class="stat-num amber">4</div>
+      <div class="stat-label" data-i18n="stat-vulns">Vulnerabilities Found</div>
+    </div>
+    <div class="stat-item fi" style="transition-delay:.24s">
+      <div class="stat-num">6</div>
+      <div class="stat-label" data-i18n="stat-certs">Certifications & Training</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── WHAT I BRING ───────────────────────────────────────────────── -->
+<section class="section">
+  <div class="eyebrow" data-i18n="bring-eyebrow">// Expertise & Defensive Mindset</div>
+  <h2 class="sec-title" data-i18n="bring-title">What I Bring</h2>
+  <p class="sec-sub" data-i18n="bring-sub">Deep offensive skills leveraged specifically to engineer stronger defenses, improve SIEM/Wazuh monitoring, and anticipate threat actor tradecraft.</p>
+
+  <div class="cards">
+
+    <div class="card fi">
+      <div class="card-icon"><i class="fas fa-crosshairs"></i></div>
+      <h3 data-i18n="bring1-title">Offensive Tradecraft & Detection Engineering</h3>
+      <p data-i18n="bring1-body">OSCP+ &amp; eJPTv2 certified. 200+ machines compromised on HackTheBox and Proving Grounds — mastering web apps, Active Directory, network infrastructure, and privilege escalation to understand precisely how attackers breach systems and how to build robust defenses against them.</p>
+      <div class="card-tags">
+        <span class="tag">OWASP Top 10</span>
+        <span class="tag">Active Directory Defense</span>
+        <span class="tag">Burp Suite Pro</span>
+        <span class="tag">BloodHound</span>
+        <span class="tag">Mitigation Strategies</span>
+      </div>
+    </div>
+
+    <div class="card fi" style="transition-delay:.08s">
+      <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+      <h3 data-i18n="bring2-title">Offensive Tooling & Hardening</h3>
+      <p data-i18n="bring2-body">Understanding custom implants, memory injection, and AMSI/EDR evasion techniques allows me to configure robust endpoint security (such as Wazuh rules and Defender hardening) to detect and block advanced post-exploitation behavior in Windows environments.</p>
+      <div class="card-tags">
+        <span class="tag">Wazuh SIEM</span>
+        <span class="tag">AMSI / EDR Defense</span>
+        <span class="tag">Telemetry Analysis</span>
+        <span class="tag">Hardening</span>
+        <span class="tag">Python / C</span>
+      </div>
+    </div>
+
+    <div class="card fi" style="transition-delay:.16s">
+      <div class="card-icon"><i class="fas fa-magnifying-glass-chart"></i></div>
+      <h3 data-i18n="bring3-title">Malware Analysis & Incident Response</h3>
+      <p data-i18n="bring3-body">Weekly dynamic malware analysis via CAPE sandbox and manual behavioral inspection — dissecting persistence mechanisms, C2 patterns, and extracting IOCs to feed into threat intelligence platforms and map adversary behavior directly to MITRE ATT&amp;CK for rapid incident response.</p>
+      <div class="card-tags">
+        <span class="tag">CAPE Sandbox</span>
+        <span class="tag">MITRE ATT&amp;CK</span>
+        <span class="tag">IOC Hunting</span>
+        <span class="tag">Threat Intelligence</span>
+        <span class="tag">Wireshark</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider-full"></div>
+
+<!-- ── CVE / SECURITY RESEARCH ───────────────────────────────────── -->
+<div class="cve-wrap" id="research">
+  <section class="section">
+    <div class="eyebrow" data-i18n="vuln-eyebrow">// Security Research</div>
+    <h2 class="sec-title" data-i18n="vuln-title">Vulnerability Research</h2>
+    <p class="sec-sub" data-i18n="vuln-sub">Independent discovery of vulnerabilities in production software, each managed through coordinated disclosure with the vendor and INCIBE.</p>
+
+    <div class="cve-stack">
+
+      <!-- CVE-2026-14856 (TastyIgniter) -->
+      <div class="cve-card fi" style="--accent:var(--am); --accent-d:var(--am-d); --accent-border:var(--am-b);">
+        <div class="cve-badge-col">
+          <span class="cve-sev"><span data-i18n="sev-medium">Medium</span> · 6.5</span>
+          <div class="cve-lpe" style="font-size:1.8rem;">XSS</div>
+          <div class="cve-lpe-sub" data-i18n="lbl-severity">Severity</div>
+          <div class="cve-pending" style="color:var(--am); font-weight:700;">CVE-2026<br/>14856</div>
+        </div>
+
+        <div class="cve-content">
+          <h3 data-i18n="cve1-title">Stored Cross-Site Scripting (XSS) in Media Manager of TastyIgniter</h3>
+          <div class="cve-meta">
+            <span class="cve-tag">CVE-2026-14856</span>
+            <span class="cve-tag">CWE-79</span>
+            <span class="cve-tag">TastyIgniter</span>
+          </div>
+          <p data-i18n="cve1-desc">
+            Vulnerability discovered in the Media Manager of TastyIgniter allowing Stored Cross-Site Scripting (XSS). Coordinated and published via official INCIBE advisory, with dedicated public PoC repository.
+          </p>
+          <dl class="cve-dl">
+            <dt data-i18n="lbl-advisory">Official Advisory</dt>
+            <dd><a class="t-link" href="https://www.incibe.es/incibe-cert/alerta-temprana/avisos/cross-site-scripting-xss-almacenado-en-media-manager-de-tastyigniter" target="_blank" data-i18n="cve1-advisory-link">INCIBE Advisory <i class="fas fa-external-link-alt"></i></a></dd>
+            <dt data-i18n="lbl-poc">PoC Repository</dt>
+            <dd><a class="t-link" href="https://github.com/jonas-fernandez-as/CVE-2026-14856-TastyIgniter" target="_blank" data-i18n="cve1-poc-link">GitHub PoC <i class="fas fa-external-link-alt"></i></a></dd>
+          </dl>
+          <div class="incibe-pill">
+            <i class="fas fa-shield-halved"></i>
+            <span data-i18n="cve1-pill">Published via INCIBE · CVE-2026-14856</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LPE (Corporate Backup Software) -->
+      <div class="cve-card fi" style="--accent:var(--crit); --accent-d:var(--crit-d); --accent-border:var(--crit-b); transition-delay:.08s">
+        <div class="cve-badge-col">
+          <span class="cve-sev"><span data-i18n="sev-critical">Critical</span> · 9.3</span>
+          <div class="cve-lpe">LPE</div>
+          <div class="cve-lpe-sub" data-i18n="lbl-severity">Severity</div>
+          <div class="cve-pending" data-i18n="pend-cve">CVE<br/>PENDING</div>
+        </div>
+
+        <div class="cve-content">
+          <h3 data-i18n="lpe-title">Local Privilege Escalation in Corporate Backup Software</h3>
+          <div class="cve-meta">
+            <span class="cve-tag">CWE-250</span>
+            <span class="cve-tag">CWE-269</span>
+            <span class="cve-tag" data-i18n="tag-privesc">Privilege Escalation</span>
+            <span class="cve-tag" data-i18n="tag-research26">Independent Research · 2026</span>
+          </div>
+          <p data-i18n="lpe-body">
+            Independently identified a critical Local Privilege Escalation vulnerability in a widely deployed corporate backup solution. The flaw allows a low-privileged user to escalate to SYSTEM on affected hosts.
+          </p>
+          <dl class="cve-dl">
+            <dt data-i18n="lbl-status">Status</dt>
+            <dd data-i18n="lpe-status">Coordinated disclosure in progress — patch under development with vendor</dd>
+            <dt data-i18n="lbl-score">Score</dt>
+            <dd><span data-i18n="sev-critical">Critical</span> 9.3 (CVSS v4.0)</dd>
+            <dt data-i18n="lbl-reference">Reference</dt>
+            <dd>INCIBE Expediente INC-2026-0152</dd>
+          </dl>
+          <div class="incibe-pill">
+            <i class="fas fa-shield-halved"></i>
+            <span data-i18n="incibe-pill-0152">Coordinated via INCIBE · Expediente INC-2026-0152</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RCE (School Management Software) -->
+      <div class="cve-card embargo fi" style="--accent:var(--high); --accent-d:var(--high-d); --accent-border:var(--high-b); transition-delay:.16s">
+        <div class="cve-badge-col">
+          <span class="cve-sev"><span data-i18n="sev-high">High</span> · 8.6</span>
+          <div class="cve-lpe">RCE</div>
+          <div class="cve-lpe-sub" data-i18n="lbl-severity">Severity</div>
+          <div class="cve-pending" data-i18n="pend-vendor">VENDOR<br/>WITHHELD</div>
+        </div>
+
+        <div class="cve-content">
+          <h3><i class="fas fa-lock"></i> <span data-i18n="rce-title">Remote Code Execution via File Upload in School Management Software</span></h3>
+          <div class="cve-meta">
+            <span class="cve-tag">CWE-434</span>
+            <span class="cve-tag">CWE-94</span>
+            <span class="cve-tag" data-i18n="tag-embargo26">Under Embargo · 2026</span>
+          </div>
+          <p data-i18n="rce-body">
+            Identified a Remote Code Execution vulnerability in the add-on upload functionality of a school management platform.
+          </p>
+          <dl class="cve-dl">
+            <dt data-i18n="lbl-product">Product</dt>
+            <dd><span data-i18n="rce-product">School Management Software — vendor</span> <span class="redacted" data-i18n="redact-withheld">WITHHELD</span></dd>
+            <dt data-i18n="lbl-reference">Reference</dt>
+            <dd>INCIBE Expediente INC-2026-0168</dd>
+          </dl>
+          <div class="incibe-pill">
+            <i class="fas fa-shield-halved"></i>
+            <span data-i18n="incibe-pill-0168">Coordinated via INCIBE · Expediente INC-2026-0168</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- .ENV Vulnerability (Gym Management Software) -->
+      <div class="cve-card embargo fi" style="--accent:var(--high); --accent-d:var(--high-d); --accent-border:var(--high-b); transition-delay:.24s">
+        <div class="cve-badge-col">
+          <span class="cve-sev"><span data-i18n="sev-high">High</span> · 8.7</span>
+          <div class="cve-lpe">.ENV</div>
+          <div class="cve-lpe-sub" data-i18n="lbl-severity">Severity</div>
+          <div class="cve-pending" data-i18n="pend-vendor">VENDOR<br/>WITHHELD</div>
+        </div>
+
+        <div class="cve-content">
+          <h3><i class="fas fa-lock"></i> <span data-i18n="env-title">Unauthenticated Disclosure of Sensitive Configuration Data (.env) via Broken Access Control</span></h3>
+          <div class="cve-meta">
+            <span class="cve-tag">CWE-538</span>
+            <span class="cve-tag" data-i18n="tag-embargo26">Under Embargo · 2026</span>
+          </div>
+          <p data-i18n="env-body">
+            Identified an information disclosure vulnerability in a gym management platform: a misconfigured access-control file, written in syntax unsupported by the deployed web server, allowed unauthenticated remote access to a sensitive environment configuration file, exposing database and SMTP credentials. Vendor and product name are withheld while disclosure is coordinated directly with them.
+          </p>
+          <dl class="cve-dl">
+            <dt data-i18n="lbl-product">Product</dt>
+            <dd><span data-i18n="env-product">Gym Management Software — vendor</span> <span class="redacted" data-i18n="redact-withheld">WITHHELD</span></dd>
+            <dt data-i18n="lbl-score">Score</dt>
+            <dd><span data-i18n="sev-high">High</span> 8.7 (CVSS v4.0)</dd>
+            <dt data-i18n="lbl-status">Status</dt>
+            <dd data-i18n="env-status">Reported directly to the vendor with a full technical report and PoC — awaiting reproduction confirmation</dd>
+            <dt data-i18n="lbl-reference">Reference</dt>
+            <dd>INCIBE Expediente INC-2026-0175</dd>
+          </dl>
+          <div class="incibe-pill">
+            <i class="fas fa-shield-halved"></i>
+            <span data-i18n="incibe-pill-0175">Coordinated via INCIBE · Expediente INC-2026-0175</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<div class="divider-full"></div>
+
+<!-- ── CREDENTIALS ────────────────────────────────────────────────── -->
+<section class="section" id="creds">
+  <div class="eyebrow" data-i18n="creds-eyebrow">// Verified & Continuous Learning</div>
+  <h2 class="sec-title" data-i18n="creds-title">Certifications & Training</h2>
+  <p class="sec-sub" data-i18n="creds-sub">Industry-recognized certifications and ongoing specialization programs.</p>
+
+  <div class="creds fi">
+    <a class="cred" href="https://www.credential.net/2ab7a94e-e66f-409a-8e56-a38dda843344" target="_blank">
+      <div class="cred-ic"><i class="fas fa-shield-virus"></i></div>
+      <div class="cred-info">
+        <h4>OSCP+</h4>
+        <p class="cred-issuer">Offensive Security · 2026</p>
+        <span class="cred-verify" data-i18n="cred-verify-btn">Verify credential <i class="fas fa-external-link-alt"></i></span>
+      </div>
+    </a>
+    <a class="cred" href="https://www.credential.net/af565611-8de7-424b-88a3-b6a9eba9f893" target="_blank">
+      <div class="cred-ic"><i class="fas fa-shield-alt"></i></div>
+      <div class="cred-info">
+        <h4>OSCP</h4>
+        <p class="cred-issuer">Offensive Security</p>
+        <span class="cred-verify" data-i18n="cred-verify-btn">Verify credential <i class="fas fa-external-link-alt"></i></span>
+      </div>
+    </a>
+    <a class="cred" href="https://www.credential.net/601e2c30-69ba-4751-8a72-3d856b036ff0" target="_blank">
+      <div class="cred-ic"><i class="fas fa-crosshairs"></i></div>
+      <div class="cred-info">
+        <h4>eJPTv2</h4>
+        <p class="cred-issuer">INE / eLearnSecurity · 2025</p>
+        <span class="cred-verify" data-i18n="cred-verify-btn">Verify credential <i class="fas fa-external-link-alt"></i></span>
+      </div>
+    </a>
+    <div class="cred" style="cursor:default;">
+      <div class="cred-ic"><i class="fas fa-user-secret"></i></div>
+      <div class="cred-info">
+        <h4>CRTO (Certified Red Team Operator)</h4>
+        <p class="cred-issuer">Zero-Point Security</p>
+        <span class="cred-badge-status status-progress" data-i18n="status-in-progress">En curso</span>
+      </div>
+    </div>
+    <div class="cred" style="cursor:default;">
+      <div class="cred-ic"><i class="fas fa-code"></i></div>
+      <div class="cred-info">
+        <h4>Malware Development in C</h4>
+        <p class="cred-issuer">Maldev Academy</p>
+        <span class="cred-badge-status status-progress" data-i18n="status-maldev">En curso / Especialización</span>
+      </div>
+    </div>
+    <div class="cred" style="cursor:default;">
+      <div class="cred-ic"><i class="fas fa-laptop-code"></i></div>
+      <div class="cred-info">
+        <h4>ASIR (Administración de Sistemas Informáticos en Red)</h4>
+        <p class="cred-issuer">Formación Profesional Oficial</p>
+        <span class="cred-badge-status status-upcoming" data-i18n="status-asir">Comienza Septiembre · Remota</span>
+      </div>
+    </div>
+    <a class="cred" href="https://drive.google.com/file/d/14zQ0bFp9a3IDUmVO-rTc7Za7eKOKL1WN/view" target="_blank">
+      <div class="cred-ic"><i class="fas fa-network-wired"></i></div>
+      <div class="cred-info">
+        <h4>Network Technician Career Path</h4>
+        <p class="cred-issuer">Cisco Networking Academy · 2023</p>
+        <span class="cred-verify" data-i18n="cred-view-btn">View credential <i class="fas fa-external-link-alt"></i></span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<div class="divider-full"></div>
+
+<!-- ── REPORTS ────────────────────────────────────────────────────── -->
+<section class="section" id="reports">
+  <div class="eyebrow" data-i18n="reports-eyebrow">// Portfolio</div>
+  <h2 class="sec-title" data-i18n="reports-title">Pentest Reports</h2>
+  <p class="sec-sub" data-i18n="reports-sub">Professional reports from hands-on lab engagements — CVSS v3.1, executive summaries, proof-of-concept and remediation roadmaps.</p>
+
+  <button class="toggle-btn" id="toggleBtn" onclick="toggleReports()">
+    <i class="fas fa-folder-open"></i> <span id="toggleBtnLabel" data-i18n="reports-show-btn">Show All Reports</span>
+  </button>
+
+  <div class="reports-grid" id="reportsGrid"></div>
+</section>
+
+<div class="divider-full"></div>
+
+<!-- ── CONTACT ────────────────────────────────────────────────────── -->
+<section class="section" id="contact">
+  <div class="eyebrow" data-i18n="contact-eyebrow">// Let's Talk</div>
+  <h2 class="sec-title" data-i18n="contact-title">Connect With Me</h2>
+  <p class="sec-sub" data-i18n="contact-sub">Open to penetration testing, red team, SOC, blue team, and any IT opportunity worth pursuing.</p>
+
+  <div class="contact-grid fi">
+    <a href="https://www.linkedin.com/in/jonás-fernández-as" class="contact-card" target="_blank">
+      <i class="fab fa-linkedin"></i>
+      <h4>LinkedIn</h4>
+      <span data-i18n="contact-linkedin">Professional network</span>
+    </a>
+    <a href="https://github.com/jonas-fernandez-as" class="contact-card" target="_blank">
+      <i class="fab fa-github"></i>
+      <h4>GitHub</h4>
+      <span data-i18n="contact-github">Code &amp; scripts</span>
+    </a>
+    <a href="https://www.youtube.com/@JonaStrikeX" class="contact-card" target="_blank">
+      <i class="fab fa-youtube"></i>
+      <h4>YouTube</h4>
+      <span>@JonaStrikeX</span>
+    </a>
+    <a href="mailto:jonas.ezequiel.fernandez.munoz@gmail.com" class="contact-card">
+      <i class="fas fa-envelope"></i>
+      <h4 data-i18n="contact-email-h4">Email</h4>
+      <span data-i18n="contact-email">Get in touch</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span data-i18n="footer-text">&copy; 2026 Jonas Fernandez &mdash; Cybersecurity Associate &amp; Vulnerability Researcher</span>
+</footer>
+
+<script>
+  /* ── REPORTS ─────────────────────────────────────────────────── */
+  const allReports = [
+    "Active","Administrator","Appointment","Archetype","Baby","Base","Blackfield","BoardLight",
+    "Breach","Bruno","Builder","Certified","Cicada","Codify","Crocodile","Dancing",
+    "Data","Delegate","Devvortex","Down","Driver","Explosion","Fawn","Flight",
+    "Forest","Funnel","GoodGames","Ignition","Included","Jeeves","Jerry","Keeper",
+    "Manage","Markup","Meow","MetaTwo","Mirage","Mongod","Netmon","Nibbles",
+    "Oopsie","Outbound","Pandora","Paper","Pennyworth","Preignition","Querier",
+    "Redeemer","Reset","Responder","Retro","Return","Sau","Sauna","Sea",
+    "ServMon","Slonik","Sniper","SolidState","Squel","SteamCloud","Sunday","Support",
+    "Synced","Tactics","Three","TwoMillion","Unified","Vaccine","VulnEscape","Writeup"
+  ];
+
+  const startingPoint = [
+    "Appointment","Archetype","Base","Crocodile","Dancing","Explosion","Fawn","Funnel",
+    "Ignition","Included","Markup","Mongod","Oopsie","Pennyworth","Preignition","Meow",
+    "Redeemer","Responder","Squel","Synced","Tactics","Three","Unified","Vaccine"
+  ];
+  const easy = [
+    "Active","Baby","BoardLight","Cicada","Codify","Data","Devvortex","Driver","Down",
+    "Forest","GoodGames","Jerry","Keeper","MetaTwo","Manage","Netmon","Nibbles","Pandora",
+    "Outbound","Paper","Retro","Return","Reset","Sauna","Sau","Sea","ServMon",
+    "SteamCloud","Support","Sunday","TwoMillion","VulnEscape","Writeup"
+  ];
+  const medium = [
+    "Administrator","Builder","Bruno","Breach","Certified","Delegate","Jeeves","Querier","Slonik","SolidState","Sniper"
+  ];
+  const hard = ["Blackfield","Flight","Mirage"];
+
+  function getReportPath(name) {
+    let folder = "Easy";
+    if (startingPoint.includes(name)) folder = "Starting%20Point";
+    else if (easy.includes(name))     folder = "Easy";
+    else if (medium.includes(name))   folder = "Medium";
+    else if (hard.includes(name))     folder = "Hard";
+
+    let filename = name;
+    if (name === "Meow")     filename = "REPORT%20MEOW%20HTB";
+    if (name === "Redeemer") filename = "Redeemereport";
+
+    return `REPORTS/${folder}/${filename}.pdf`;
+  }
+
+  (function renderReports() {
+    document.getElementById("reportsGrid").innerHTML = allReports.map(r =>
+      `<a href="${getReportPath(r)}" class="report-item" target="_blank">
+         <i class="fas fa-file-pdf"></i>${r}
+       </a>`
+    ).join("");
+  })();
+
+  function toggleReports() {
+    const grid = document.getElementById("reportsGrid");
+    grid.classList.toggle("open");
+    updateReportsLabel();
+  }
+
+  function updateReportsLabel() {
+    const grid = document.getElementById("reportsGrid");
+    const btn  = document.getElementById("toggleBtn");
+    const open = grid.classList.contains("open");
+    const icon = open ? "fa-folder" : "fa-folder-open";
+    const label = open
+      ? (currentLang === "es" ? "Ocultar Reportes" : "Hide Reports")
+      : (currentLang === "es" ? "Ver Todos los Reportes" : "Show All Reports");
+    btn.innerHTML = `<i class="fas ${icon}"></i> <span id="toggleBtnLabel">${label}</span>`;
+  }
+
+  /* ── THEME TOGGLE ──────────────────────────────────────────────── */
+  let currentTheme = "dark";
+  function toggleTheme() {
+    currentTheme = currentTheme === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", currentTheme);
+    document.getElementById("themeToggle").innerHTML = currentTheme === "dark"
+      ? '<i class="fas fa-sun"></i>'
+      : '<i class="fas fa-moon"></i>';
+  }
+
+  /* ── LANGUAGE TOGGLE ───────────────────────────────────────────── */
+  let currentLang = "en";
+  const originalHTML = new Map();
+
+  const I18N_ES = {
+    "nav-about": "Sobre mí",
+    "nav-cve": "CVE",
+    "nav-certs": "Certificados",
+    "nav-reports": "Reportes",
+    "nav-contact": "Contacto",
+
+    "hero-avail": "Disponible para nuevas oportunidades",
+    "hero-sub": "Cybersecurity Associate & Vulnerability Researcher.<br />Táctica ofensiva aplicada para construir una defensa sólida.",
+    "pill-researcher": "Investigador de CVEs",
+    "cta-reports": "Ver Reportes",
+    "cta-cv": "CV / Currículum",
+    "cta-contact": "Contactar",
+
+    "term-whoami-sub": "Asociado de Ciberseguridad e Investigador de Vulnerabilidades",
+    "term-role": "\"Asociado de Ciberseguridad e Investigador de Vulnerabilidades\"",
+    "term-focus": "\"Defensa basada en ataques e ingeniería de detección\"",
+    "term-certs": "\"OSCP+ · eJPTv2 · CRTO (En curso)\"",
+    "term-status": "\"DISPONIBLE PARA OPORTUNIDADES\"",
+
+    "stat-machines": "Máquinas Comprometidas",
+    "stat-reports": "Reportes de Pentesting",
+    "stat-vulns": "Vulnerabilidades Encontradas",
+    "stat-certs": "Certificados y Formación",
+
+    "bring-eyebrow": "// Especialización y Enfoque Defensivo",
+    "bring-title": "Lo Que Aporto",
+    "bring-sub": "Conocimiento ofensivo profundo aplicado específicamente a la ingeniería de detección, monitoreo SIEM/Wazuh y mitigación de amenazas.",
+    "bring1-title": "Tradecraft Ofensivo e Ingeniería de Detección",
+    "bring1-body": "Certificado OSCP+ y eJPTv2. Más de 200 máquinas resueltas en HackTheBox y Proving Grounds — aplicaciones web, Active Directory y escalada de privilegios para comprender cómo atacan los adversarios y diseñar defensas resilientes.",
+    "bring2-title": "Herramientas Ofensivas y Endurecimiento",
+    "bring2-body": "El dominio de la inyección de memoria, bypass de AMSI/EDR y desarrollo de implantes me permite configurar una seguridad de endpoints robusta (Wazuh y reglas de detección en Defender) para bloquear amenazas avanzadas.",
+    "bring3-title": "Análisis de Malware y Respuesta a Incidentes",
+    "bring3-body": "Análisis dinámico de malware semanal mediante sandbox CAPE e inspección conductual — disección de persistencia, C2, extracción de IOCs y mapeo a MITRE ATT&amp;CK para acelerar la respuesta a incidentes.",
+
+    "vuln-eyebrow": "// Investigación de Seguridad",
+    "vuln-title": "Investigación de Vulnerabilidades",
+    "vuln-sub": "Descubrimiento independiente de vulnerabilidades en software en producción, gestionadas mediante divulgación coordinada.",
+
+    "sev-critical": "Crítico",
+    "sev-medium": "Medio",
+    "sev-high": "Alto",
+    "lbl-severity": "Severidad",
+    "pend-cve": "CVE<br/>PENDIENTE",
+    "pend-vendor": "PROVEEDOR<br/>OCULTO",
+    "lbl-status": "Estado",
+    "lbl-score": "Puntuación",
+    "lbl-reference": "Referencia",
+    "lbl-product": "Producto",
+    "lbl-advisory": "Aviso Oficial",
+    "lbl-poc": "Repositorio PoC",
+    "tag-privesc": "Escalada de Privilegios",
+    "tag-research26": "Investigación Independiente · 2026",
+    "tag-embargo26": "Bajo Embargo · 2026",
+    "redact-withheld": "OCULTO",
+
+    "cve1-title": "Cross-Site Scripting (XSS) Almacenado en Media Manager de TastyIgniter",
+    "cve1-desc": "Vulnerabilidad descubierta en el Media Manager de TastyIgniter que permite Cross-Site Scripting (XSS) Almacenado. Coordinada y publicada mediante aviso oficial de INCIBE, con repositorio de PoC público.",
+    "cve1-advisory-link": 'Aviso de INCIBE <i class="fas fa-external-link-alt"></i>',
+    "cve1-poc-link": 'PoC en GitHub <i class="fas fa-external-link-alt"></i>',
+    "cve1-pill": "Publicado vía INCIBE · CVE-2026-14856",
+
+    "lpe-title": "Escalada de Privilegios Locales en Software de Backup Corporativo",
+    "lpe-body": "Identificada de forma independiente una vulnerabilidad crítica de escalada de privilegios locales en una solución de respaldo ampliamente desplegada. La falla permite a un usuario de bajos privilegios escalar a SYSTEM en los hosts afectados.",
+    "lpe-status": "Divulgación coordinada en curso — parche en desarrollo con el proveedor",
+    "incibe-pill-0152": "Coordinado vía INCIBE · Expediente INC-2026-0152",
+
+    "rce-title": "Ejecución Remota de Código vía Subida de Archivos en Software de Gestión Escolar",
+    "rce-body": "Identificada una vulnerabilidad de ejecución remota de código en la funcionalidad de subida de complementos de una plataforma de gestión escolar.",
+    "rce-product": "Software de Gestión Escolar — proveedor",
+    "incibe-pill-0168": "Coordinado vía INCIBE · Expediente INC-2026-0168",
+
+    "env-title": "Divulgación No Autenticada de Datos de Configuración Sensibles (.env) vía Control de Acceso Roto",
+    "env-body": "Identificada una vulnerabilidad de divulgación de información en una plataforma de gestión de gimnasios: un archivo de control de acceso mal configurado, escrito en una sintaxis no soportada por el servidor web desplegado, permitió el acceso remoto no autenticado a un archivo de configuración de entorno sensible, exponiendo credenciales de base de datos y SMTP. El nombre del proveedor y del producto se retienen mientras se coordina la divulgación directamente con ellos.",
+    "env-product": "Software de Gestión de Gimnasios — proveedor",
+    "env-status": "Reportado directamente al proveedor con un informe técnico completo y PoC — a la espera de confirmación de reproducción",
+    "incibe-pill-0175": "Coordinado vía INCIBE · Expediente INC-2026-0175",
+
+    "creds-eyebrow": "// Verificado y Formación Continua",
+    "creds-title": "Certificaciones y Capacitación",
+    "creds-sub": "Certificaciones reconocidas por la industria y programas de especialización técnica.",
+    "cred-verify-btn": 'Verificar credencial <i class="fas fa-external-link-alt"></i>',
+    "cred-view-btn": 'Ver credencial <i class="fas fa-external-link-alt"></i>',
+
+    "status-in-progress": "En curso",
+    "status-maldev": "En curso / Especialización",
+    "status-asir": "Comienza Septiembre · Remota",
+
+    "reports-eyebrow": "// Portafolio",
+    "reports-title": "Reportes de Pentesting",
+    "reports-sub": "Reportes profesionales de proyectos prácticos de laboratorio.",
+    "reports-show-btn": "Ver Todos los Reportes",
+
+    "contact-eyebrow": "// Hablemos",
+    "contact-title": "Conectá Conmigo",
+    "contact-sub": "Abierto a penetration testing, red team, SOC, blue team y oportunidades en ciberseguridad.",
+    "contact-linkedin": "Red profesional",
+    "contact-github": "Código y scripts",
+    "contact-email-h4": "Correo",
+    "contact-email": "Contactar",
+
+    "footer-text": '&copy; 2026 Jonas Fernandez &mdash; Cybersecurity Associate &amp; Vulnerability Researcher',
+  };
+
+  const I18N_EN = {
+    "status-in-progress": "In Progress",
+    "status-maldev": "In Progress / Specialization",
+    "status-asir": "Starts September · Remote"
+  };
+
+  function initI18n() {
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      originalHTML.set(el, el.innerHTML);
+    });
+  }
+
+  function toggleLang() {
+    currentLang = currentLang === "en" ? "es" : "en";
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const key = el.getAttribute("data-i18n");
+      if (currentLang === "es" && I18N_ES[key] !== undefined) {
+        el.innerHTML = I18N_ES[key];
+      } else if (currentLang === "en" && I18N_EN[key] !== undefined) {
+        el.innerHTML = I18N_EN[key];
+      } else if (originalHTML.has(el)) {
+        el.innerHTML = originalHTML.get(el);
+      }
+    });
+    document.getElementById("langToggle").textContent = currentLang === "en" ? "ES" : "EN";
+    document.documentElement.lang = currentLang;
+    updateReportsLabel();
+  }
+
+  initI18n();
+
+  /* ── SCROLL FADE-IN ────────────────────────────────────────────── */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll(".fi").forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
