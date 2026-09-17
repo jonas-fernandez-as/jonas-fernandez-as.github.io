@@ -23,7 +23,43 @@ const isActive = (href: string) =>
       ))}
     </nav>
     <div class="top-right">
-      <span><span class="dot"></span>Available</span>
+      <span class="avail"><span class="dot"></span>Available</span>
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+        aria-controls="mobileNav"
+      >
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+    {nav.map(item => (
+      <a
+        href={item.href}
+        aria-current={isActive(item.href) ? 'page' : undefined}
+      >{item.label}</a>
+    ))}
+  </nav>
 </header>
+
+<script>
+  const toggle = document.getElementById('menuToggle');
+  const menu = document.getElementById('mobileNav');
+  if (toggle && menu) {
+    toggle.addEventListener('click', () => {
+      const open = menu.classList.toggle('open');
+      toggle.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+    menu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        menu.classList.remove('open');
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+</script>

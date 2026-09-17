@@ -1076,3 +1076,58 @@ body::after {
   gap: 6px;
   margin-top: 10px;
 }
+
+/* ── MOBILE NAV ──────────────────────────────────── */
+.menu-toggle {
+  display: none;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+  border: 1px solid var(--rule-2);
+  transition: border-color .2s var(--ease);
+}
+.menu-toggle:hover { border-color: var(--ink-3); }
+.menu-toggle span {
+  display: block;
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 1.5px;
+  background: var(--ink);
+  transition: transform .3s var(--ease), opacity .2s var(--ease), top .3s var(--ease);
+}
+.menu-toggle span:nth-child(1) { top: 10px; }
+.menu-toggle span:nth-child(2) { top: 16px; }
+.menu-toggle span:nth-child(3) { top: 22px; }
+.menu-toggle.open span:nth-child(1) { top: 16px; transform: rotate(45deg); }
+.menu-toggle.open span:nth-child(2) { opacity: 0; }
+.menu-toggle.open span:nth-child(3) { top: 16px; transform: rotate(-45deg); }
+
+.mobile-nav {
+  display: none;
+  border-top: 1px solid var(--rule);
+  flex-direction: column;
+  background: var(--bg);
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a {
+  padding: 16px 24px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  border-bottom: 1px solid var(--rule);
+  transition: color .2s var(--ease), background .2s var(--ease);
+}
+.mobile-nav a:last-child { border-bottom: 0; }
+.mobile-nav a:hover,
+.mobile-nav a[aria-current="page"] { color: var(--accent); background: var(--bg-2); }
+
+@media (max-width: 720px) {
+  .menu-toggle { display: block; }
+  .top-right { gap: 12px; }
+  .top-right .avail { display: none; }
+}
