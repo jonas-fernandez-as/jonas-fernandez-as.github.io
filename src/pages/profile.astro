@@ -1,0 +1,52 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionBand from '@/components/SectionBand.astro';
+
+const entries = [
+  {
+    num: 'I',
+    title: 'Offensive tradecraft & detection engineering',
+    body: 'OSCP+ & CRTO certified, with eJPTv2 as an earlier milestone. 200+ machines compromised on HackTheBox and Proving Grounds — web applications, Active Directory, network infrastructure, and privilege escalation — to understand precisely how attackers breach systems and how to build robust defenses against them.',
+    tags: ['OWASP Top 10', 'Active Directory', 'Burp Suite Pro', 'BloodHound', 'Mitigation'],
+  },
+  {
+    num: 'II',
+    title: 'Offensive tooling & endpoint hardening',
+    body: 'Understanding custom implants, memory injection, and AMSI/EDR evasion techniques allows me to configure robust endpoint security — Wazuh rules and Defender hardening — to detect and block advanced post-exploitation behavior in Windows environments.',
+    tags: ['Wazuh SIEM', 'AMSI / EDR', 'Telemetry', 'Hardening', 'Python / C'],
+  },
+  {
+    num: 'III',
+    title: 'Malware analysis & incident response',
+    body: "Weekly dynamic malware analysis via CAPE sandbox and manual behavioral inspection — dissecting persistence mechanisms, C2 patterns, and extracting IOCs to feed into threat intelligence platforms and map adversary behavior directly to MITRE ATT&CK for rapid incident response.",
+    tags: ['CAPE Sandbox', 'MITRE ATT&CK', 'IOC Hunting', 'Threat Intel', 'Wireshark'],
+  },
+];
+---
+<BaseLayout path="/profile" title="Profile — Jonas Fernandez" description="What I bring to a security team.">
+  <div style="padding-top: 88px;">
+    <SectionBand num="01" label="Profile" title="What I bring to a security team" meta="<b>03</b> areas" />
+  </div>
+
+  <div class="container section-body">
+    <p class="section-desc rv">Deep offensive experience leveraged to engineer stronger defenses, improve SIEM monitoring, and anticipate threat actor tradecraft.</p>
+
+    <div class="entries">
+      {entries.map(e => (
+        <article class="entry rv">
+          <span class="entry-num">{e.num}</span>
+          <div class="entry-content">
+            <h3>{e.title}</h3>
+            <p>{e.body}</p>
+          </div>
+          <div class="entry-side">
+            <h5>Toolkit</h5>
+            <div class="entry-tags">
+              {e.tags.map(t => <span class="tag">{t}</span>)}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

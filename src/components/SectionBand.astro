@@ -1,0 +1,19 @@
+---
+interface Props {
+  num: string;
+  label: string;
+  title: string;
+  meta?: string;
+}
+const { num, label, title, meta } = Astro.props;
+---
+<div class="section-band">
+  <div class="container band-inner">
+    <span class="band-num">{num}</span>
+    <div class="band-main">
+      <span class="band-label">{label}</span>
+      <h2 class="band-title">{title}</h2>
+    </div>
+    {meta && <span class="band-meta" set:html={meta} />}
+  </div>
+</div>

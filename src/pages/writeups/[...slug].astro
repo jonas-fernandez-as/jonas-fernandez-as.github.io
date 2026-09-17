@@ -1,0 +1,29 @@
+---
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+
+export async function getStaticPaths() {
+  const writeups = await getCollection('writeups');
+  return writeups.map(entry => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const meta: string[] = [];
+if (entry.data.difficulty) meta.push(entry.data.difficulty);
+if (entry.data.readingTime) meta.push(`${entry.data.readingTime} min read`);
+---
+<ArticleLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  type={entry.data.type}
+  date={entry.data.date}
+  meta={meta}
+  ledger="/writeups"
+>
+  <Content />
+</ArticleLayout>

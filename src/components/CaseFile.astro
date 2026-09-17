@@ -1,0 +1,24 @@
+---
+import type { ResearchEntry } from '@/data/research';
+interface Props {
+  entry: ResearchEntry;
+}
+const { entry } = Astro.props;
+---
+<article class="case rv" data-sev={entry.severity}>
+  <div class="case-side">
+    <span class="id">{entry.id}</span>
+    <span class="ref">{entry.ref}</span>
+    <span class="sev">{entry.score}</span>
+  </div>
+  <div class="case-content">
+    <h3>{entry.title}</h3>
+    <p>{entry.body}</p>
+  </div>
+  <div class="case-links">
+    {entry.links.map(l => (
+      <a href={l.url} target="_blank" rel="noopener">{l.label}</a>
+    ))}
+    {entry.notes.map(n => <span class="cwe">{n}</span>)}
+  </div>
+</article>

@@ -1,0 +1,42 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionBand from '@/components/SectionBand.astro';
+import { certs } from '@/data/certs';
+---
+<BaseLayout path="/certs" title="Certifications — Jonas Fernandez" description="Industry-recognized certifications and ongoing specialization programs.">
+  <div style="padding-top: 88px;">
+    <SectionBand num="05" label="Credentials" title="Certifications & training" meta="<b>07</b> total<br>2023 — 2026" />
+  </div>
+
+  <div class="container section-body">
+    <p class="section-desc rv">Industry-recognized certifications and ongoing specialization programs.</p>
+
+    <table class="certs-table rv">
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Certification</th>
+          <th>Issuer</th>
+          <th>Verify</th>
+        </tr>
+      </thead>
+      <tbody>
+        {certs.map(c => (
+          <tr>
+            <td>{c.year}</td>
+            <td><span class="cert-name">{c.name}</span></td>
+            <td class="cert-issuer">{c.issuer}</td>
+            <td>
+              {c.verify && (
+                <a class="cert-link" href={c.verify.url} target="_blank" rel="noopener">{c.verify.label}</a>
+              )}
+              {c.status && (
+                <span class={`cert-status ${c.status.variant ?? ''}`}>{c.status.label}</span>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</BaseLayout>

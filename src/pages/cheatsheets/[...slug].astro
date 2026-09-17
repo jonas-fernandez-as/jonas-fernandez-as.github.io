@@ -1,0 +1,28 @@
+---
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+
+export async function getStaticPaths() {
+  const cheatsheets = await getCollection('cheatsheets');
+  return cheatsheets.map(entry => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const meta: string[] = [entry.data.category];
+if (entry.data.tools.length > 0) meta.push(entry.data.tools.join(' · '));
+---
+<ArticleLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  type={entry.data.category}
+  date={entry.data.updated}
+  meta={meta}
+  ledger="/cheatsheets"
+>
+  <Content />
+</ArticleLayout>

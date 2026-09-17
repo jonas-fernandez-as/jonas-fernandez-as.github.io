@@ -1,0 +1,38 @@
+---
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map(entry => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const statusMap: Record<string, string> = {
+  public: 'Public', wip: 'WIP', research: 'Research', private: 'Private',
+};
+
+const hasLinks = entry.data.repo || entry.data.demo || entry.data.video;
+---
+<ArticleLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  type={statusMap[entry.data.status] ?? entry.data.status}
+  date={entry.data.date}
+  meta={entry.data.stack}
+  ledger="/projects"
+>
+  {hasLinks && (
+    <div style="display: flex; gap: 12px; margin-bottom: 40px; flex-wrap: wrap;">
+      {entry.data.video && <a href={entry.data.video} class="btn primary" target="_blank" rel="noopener">Watch video <span class="arrow">↗</span></a>}
+      {entry.data.repo && <a href={entry.data.repo} class="btn" target="_blank" rel="noopener">Repository <span class="arrow">↗</span></a>}
+      {entry.data.demo && <a href={entry.data.demo} class="btn" target="_blank" rel="noopener">Live demo <span class="arrow">↗</span></a>}
+    </div>
+  )}
+  <Content />
+</ArticleLayout>

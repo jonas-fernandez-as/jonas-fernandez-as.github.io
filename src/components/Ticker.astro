@@ -1,0 +1,9 @@
+---
+import { site } from '@/data/site';
+const items = [...site.ticker, ...site.ticker];
+---
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    {items.map(t => <span>{t}</span>)}
+  </div>
+</div>

@@ -1,0 +1,29 @@
+---
+import { site, nav } from '@/data/site';
+const { path = '/' } = Astro.props;
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+---
+<header class="top">
+  <div class="top-inner">
+    <a href="/" class="brand">
+      <img src={site.photo} alt="" class="brand-avatar" />
+      <span class="brand-text">
+        <span class="brand-mark">{site.short}</span>
+        <span class="brand-sep">/</span>
+        <span>{site.year}</span>
+      </span>
+    </a>
+    <nav class="nav">
+      {nav.map(item => (
+        <a
+          href={item.href}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+        >{item.label}</a>
+      ))}
+    </nav>
+    <div class="top-right">
+      <span><span class="dot"></span>Available</span>
+    </div>
+  </div>
+</header>

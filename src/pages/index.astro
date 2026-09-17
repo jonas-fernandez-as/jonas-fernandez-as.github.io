@@ -1,0 +1,161 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Ticker from '@/components/Ticker.astro';
+import { site } from '@/data/site';
+
+const writeups = (await getCollection('writeups', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+
+const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
+---
+<BaseLayout path="/">
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-meta">
+        <span class="idx">CASE FILE <b>{site.caseFile}</b></span>
+        <span>{site.location} — {site.timezone}</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="line"><span class="line-inner">Jonas</span></span>
+        <span class="line"><span class="line-inner">Fernandez</span></span>
+      </h1>
+
+      <div class="hero-grid">
+        <div class="hero-lede-col">
+          <div class="hero-portrait">
+            <img src={site.photo} alt={site.name} />
+          </div>
+          <p class="hero-lede">
+            Cybersecurity Associate &amp; Vulnerability Researcher. I break software on purpose, then build the <em>detections and defenses</em> that stop the next person from doing the same.
+          </p>
+        </div>
+
+        <div class="hero-col">
+          <h4>Credentials</h4>
+          <dl>
+            <div><dt>Cert</dt><dd>OSCP+</dd></div>
+            <div><dt>Cert</dt><dd>CRTO</dd></div>
+            <div><dt>Cert</dt><dd>eJPTv2</dd></div>
+            <div><dt>Training</dt><dd>Maldev · Malware in C</dd></div>
+          </dl>
+        </div>
+
+        <div class="hero-col">
+          <h4>Navigate</h4>
+          <div class="hero-actions">
+            <a href="/writeups" class="btn primary">Journal <span class="arrow">→</span></a>
+            <a href={site.cv} class="btn" target="_blank" rel="noopener">CV <span class="arrow">↓</span></a>
+            <a href="/contact" class="btn">Contact <span class="arrow">→</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stats-inner">
+      {site.stats.map(s => (
+        <div class="stat">
+          <span class="num">{s.num}</span>
+          <span class="lbl" set:html={s.lbl} />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <Ticker />
+
+  <section class="section">
+    <div class="container" style="padding-top: 64px; padding-bottom: 64px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 40px; gap: 24px; flex-wrap: wrap;">
+        <div>
+          <span class="band-label">Journal</span>
+          <h2 class="band-title" style="font-size: 40px; margin-top: 8px;">Latest writeups</h2>
+        </div>
+        <a href="/writeups" class="btn">All writeups <span class="arrow">→</span></a>
+      </div>
+
+      <div class="writeups">
+        {writeups.map((w, i) => (
+          <a class="writeup rv" href={`/writeups/${w.id}`}>
+            <span class="writeup-num">{String(i + 1).padStart(2, '0')}</span>
+            <div class="writeup-meta">
+              <span class="date">{fmt(w.data.date)}</span>
+              <span class="type">{w.data.type}</span>
+            </div>
+            <div class="writeup-main">
+              <h3>{w.data.title}</h3>
+              <p>{w.data.description}</p>
+              {(w.data.difficulty || w.data.readingTime) && (
+                <div class="writeup-foot">
+                  {w.data.difficulty && <span>{w.data.difficulty}</span>}
+                  {w.data.difficulty && w.data.readingTime && <span class="dot">·</span>}
+                  {w.data.readingTime && <span>{w.data.readingTime} min read</span>}
+                </div>
+              )}
+            </div>
+            <span class="writeup-arrow">→</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container" style="padding-top: 64px; padding-bottom: 64px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 40px; gap: 24px; flex-wrap: wrap;">
+        <div>
+          <span class="band-label">Builds</span>
+          <h2 class="band-title" style="font-size: 40px; margin-top: 8px;">Recent projects</h2>
+        </div>
+        <a href="/projects" class="btn">All projects <span class="arrow">→</span></a>
+      </div>
+
+      <div class="projects">
+        {projects.map(p => (
+          <article class="project rv">
+            <div class="project-head">
+              <span class={`project-status ${p.data.status}`}>
+                {p.data.status.toUpperCase()}
+              </span>
+              <span class="project-year">{p.data.date.getFullYear()}</span>
+            </div>
+            <h3><a href={`/projects/${p.id}`} style="color:inherit">{p.data.title}</a></h3>
+            <p>{p.data.description}</p>
+            <div class="project-foot">
+              <div class="project-tags">
+                {p.data.stack.map(t => <span class="tag">{t}</span>)}
+              </div>
+              <div class="project-links">
+                {p.data.repo && <a href={p.data.repo} target="_blank" rel="noopener">Repo ↗</a>}
+                <a href={`/projects/${p.id}`}>Details →</a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container" style="padding: 96px 0 80px; text-align: center;">
+      <span class="band-label">Say hi</span>
+      <h2 class="band-title" style="font-size: clamp(40px, 6vw, 80px); margin: 24px 0 32px;">
+        Open to opportunities<br>worth pursuing.
+      </h2>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <a href="/contact" class="btn primary">Get in touch <span class="arrow">→</span></a>
+        <a href="/profile" class="btn">See profile <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

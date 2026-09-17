@@ -1,0 +1,19 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionBand from '@/components/SectionBand.astro';
+import CaseFile from '@/components/CaseFile.astro';
+import { research } from '@/data/research';
+---
+<BaseLayout path="/research" title="Research — Jonas Fernandez" description="Independent vulnerability disclosures coordinated with vendors and INCIBE.">
+  <div style="padding-top: 88px;">
+    <SectionBand num="02" label="Security Research" title="Vulnerability disclosures" meta="<b>04</b> entries<br>2025 — 2026" />
+  </div>
+
+  <div class="container section-body">
+    <p class="section-desc rv">Independent discovery of vulnerabilities in production software, each managed through coordinated disclosure with the vendor and INCIBE.</p>
+
+    <div class="cases">
+      {research.map(r => <CaseFile entry={r} />)}
+    </div>
+  </div>
+</BaseLayout>

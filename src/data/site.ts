@@ -1,0 +1,44 @@
+export const site = {
+  name: 'Jonas Fernandez',
+  short: 'JF',
+  role: 'Vulnerability Researcher',
+  roleLong: 'Cybersecurity Associate & Vulnerability Researcher',
+  location: 'Valencia area · ES',
+  timezone: 'GMT+1',
+  caseFile: '2026-JF-01',
+  year: 2026,
+  email: 'jonas.ezequiel.fernandez.munoz@gmail.com',
+  socials: {
+    linkedin: { label: 'LinkedIn', value: 'jonás-fernández-as', url: 'https://www.linkedin.com/in/jonás-fernández-as' },
+    github:   { label: 'GitHub',   value: 'jonas-fernandez-as', url: 'https://github.com/jonas-fernandez-as' },
+    youtube:  { label: 'YouTube',  value: '@JonaStrikeX',       url: 'https://www.youtube.com/@JonaStrikeX' },
+    email:    { label: 'Email',    value: 'jonas.ezequiel.fernandez.munoz', url: 'mailto:jonas.ezequiel.fernandez.munoz@gmail.com' },
+  },
+  cv: '/cv/Jonas-Fernandez-Curriculum.pdf',
+  photo: '/images/me.png',
+  stats: [
+    { num: '200+', lbl: 'Machines<br>compromised' },
+    { num: '70+',  lbl: 'Pentest<br>reports' },
+    { num: '04',   lbl: 'Vulnerabilities<br>disclosed' },
+    { num: '07',   lbl: 'Certifications<br>&amp; training' },
+  ],
+  ticker: [
+    'OSCP+', 'CRTO', 'eJPTv2',
+    'Active Directory', 'Kerberoasting',
+    'AMSI Bypass', 'EDR Evasion',
+    'CVE-2026-14856', 'Malware Analysis',
+    'Wazuh SIEM', 'MITRE ATT&CK',
+    'CAPE Sandbox', 'Threat Intel',
+  ],
+};
+
+export const nav = [
+  { href: '/profile',  label: 'Profile' },
+  { href: '/research', label: 'Research' },
+  { href: '/writeups', label: 'Writeups' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/certs',    label: 'Certs' },
+  { href: '/reports',  label: 'Reports' },
+  { href: '/cheatsheets', label: 'Cheatsheets' },
+  { href: '/contact',  label: 'Contact' },
+];

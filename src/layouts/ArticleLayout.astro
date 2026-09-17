@@ -1,0 +1,44 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  type: string;
+  date: Date;
+  meta?: string[];
+  ledger?: string;
+}
+const { title, description, type, date, meta = [], ledger } = Astro.props;
+
+const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
+---
+<BaseLayout title={`${title} — ${type}`} description={description}>
+  <article class="container">
+    <header class="article-head">
+      <div class="article-meta">
+        <span class="type">{type}</span>
+        <span class="sep">·</span>
+        <span>{fmt(date)}</span>
+        {meta.map((m) => (
+          <>
+            <span class="sep">·</span>
+            <span>{m}</span>
+          </>
+        ))}
+      </div>
+      <h1 class="article-title">{title}</h1>
+      <p class="article-lede">{description}</p>
+    </header>
+
+    <div class="prose">
+      <slot />
+    </div>
+
+    <div style="padding: 80px 0 40px; border-top: 1px solid var(--rule); margin-top: 80px;">
+      <a href={ledger ?? '/'} class="btn">
+        <span class="arrow">←</span> Back
+      </a>
+    </div>
+  </article>
+</BaseLayout>

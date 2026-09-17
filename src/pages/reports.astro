@@ -1,0 +1,22 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionBand from '@/components/SectionBand.astro';
+import { allReports, getReportPath } from '@/data/reports';
+---
+<BaseLayout path="/reports" title="Pentest Reports — Jonas Fernandez" description="Reports from HackTheBox and Proving Grounds engagements.">
+  <div style="padding-top: 88px;">
+    <SectionBand num="06" label="Portfolio" title="Pentest reports" meta="<b>70+</b> reports<br>HTB · PG" />
+  </div>
+
+  <div class="container section-body">
+    <p class="section-desc rv">Reports from HackTheBox and Proving Grounds engagements — CVSS scoring, executive summaries, PoCs, and remediation roadmaps.</p>
+
+    <div class="reports-grid rv">
+      {allReports.map(r => (
+        <a class="report" href={getReportPath(r)} target="_blank" rel="noopener">
+          <span>{r}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

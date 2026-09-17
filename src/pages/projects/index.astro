@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionBand from '@/components/SectionBand.astro';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<BaseLayout path="/projects" title="Projects — Jonas Fernandez" description="Open-source tools, labs, and experiments.">
+  <div style="padding-top: 88px;">
+    <SectionBand
+      num="04"
+      label="Builds"
+      title="Projects & tooling"
+      meta={`<b>${String(projects.length).padStart(2, '0')}</b> active`}
+    />
+  </div>
+
+  <div class="container section-body">
+    <p class="section-desc rv">Tools, labs, and experiments — offensive, defensive, and everything in between.</p>
+
+    <div class="projects">
+      {projects.map(p => (
+        <article class="project rv">
+          <div class="project-head">
+            <span class={`project-status ${p.data.status}`}>{p.data.status.toUpperCase()}</span>
+            <span class="project-year">{p.data.date.getFullYear()}</span>
+          </div>
+          <h3><a href={`/projects/${p.id}`} style="color:inherit">{p.data.title}</a></h3>
+          <p>{p.data.description}</p>
+          <div class="project-foot">
+            <div class="project-tags">
+              {p.data.stack.map(t => <span class="tag">{t}</span>)}
+            </div>
+            <div class="project-links">
+              {p.data.repo && <a href={p.data.repo} target="_blank" rel="noopener">Repo ↗</a>}
+              <a href={`/projects/${p.id}`}>Details →</a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
