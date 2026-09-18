@@ -3,6 +3,7 @@ title: "Educational Ransomware PoC — Anatomy of File Encryption"
 description: "A minimal ransomware written in C for Linux, built to understand symmetric encryption, C2 check-in, and the exact telemetry each stage produces on the endpoint."
 date: 2025-12-19
 status: "research"
+category: "Malware Analysis"
 stack: [C, OpenSSL, libcurl, Linux, Cryptography]
 repo: "https://github.com/jonas-fernandez-as/simple-ransomware-poc"
 video: "https://youtu.be/JU9z9T79F5k"

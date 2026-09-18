@@ -1131,3 +1131,41 @@ body::after {
   .top-right { gap: 12px; }
   .top-right .avail { display: none; }
 }
+
+/* ── CATEGORY GROUPS (writeups / projects) ───────── */
+.cat-group {
+  padding: 56px 0;
+  border-top: 1px solid var(--rule);
+}
+.cat-group:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+.cat-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+.cat-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 32px;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--accent);
+  line-height: 1;
+}
+.cat-count {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.cat-group .writeups,
+.cat-group .projects {
+  border-top: 0;
+}

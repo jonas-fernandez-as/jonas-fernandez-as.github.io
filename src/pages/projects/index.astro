@@ -5,6 +5,12 @@ import SectionBand from '@/components/SectionBand.astro';
 
 const projects = (await getCollection('projects', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const categories = [...new Set(projects.map(p => p.data.category))];
+
+const byCategory = Object.fromEntries(
+  categories.map(cat => [cat, projects.filter(p => p.data.category === cat)])
+);
 ---
 <BaseLayout path="/projects" title="Projects — Jonas Fernandez" description="Open-source tools, labs, and experiments.">
   <div style="padding-top: 88px;">
@@ -12,33 +18,47 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft))
       num="04"
       label="Builds"
       title="Projects & tooling"
-      meta={`<b>${String(projects.length).padStart(2, '0')}</b> active`}
+      meta={`<b>${String(projects.length).padStart(2, '0')}</b> active<br>${categories.length} categories`}
     />
   </div>
 
   <div class="container section-body">
     <p class="section-desc rv">Tools, labs, and experiments — offensive, defensive, and everything in between.</p>
 
-    <div class="projects">
-      {projects.map(p => (
-        <article class="project rv">
-          <div class="project-head">
-            <span class={`project-status ${p.data.status}`}>{p.data.status.toUpperCase()}</span>
-            <span class="project-year">{p.data.date.getFullYear()}</span>
-          </div>
-          <h3><a href={`/projects/${p.id}`} style="color:inherit">{p.data.title}</a></h3>
-          <p>{p.data.description}</p>
-          <div class="project-foot">
-            <div class="project-tags">
-              {p.data.stack.map(t => <span class="tag">{t}</span>)}
-            </div>
-            <div class="project-links">
-              {p.data.repo && <a href={p.data.repo} target="_blank" rel="noopener">Repo ↗</a>}
-              <a href={`/projects/${p.id}`}>Details →</a>
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
+    {categories.map(cat => (
+      <div class="cat-group rv">
+        <div class="cat-head">
+          <h3 class="cat-title">{cat}</h3>
+          <span class="cat-count">{byCategory[cat].length} project{byCategory[cat].length === 1 ? '' : 's'}</span>
+        </div>
+
+        <div class="projects">
+          {byCategory[cat].map(p => (
+            <article class="project">
+              <div class="project-head">
+                <span class={`project-status ${p.data.status}`}>{p.data.status.toUpperCase()}</span>
+                <span class="project-year">{p.data.date.getFullYear()}</span>
+              </div>
+              <h3><a href={`/projects/${p.id}`} style="color:inherit">{p.data.title}</a></h3>
+              <p>{p.data.description}</p>
+              <div class="project-foot">
+                <div class="project-tags">
+                  {p.data.stack.map(t => <span class="tag">{t}</span>)}
+                </div>
+                <div class="project-links">
+                  {p.data.video && <a href={p.data.video} target="_blank" rel="noopener">Video ↗</a>}
+                  {p.data.repo && <a href={p.data.repo} target="_blank" rel="noopener">Repo ↗</a>}
+                  <a href={`/projects/${p.id}`}>Details →</a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    ))}
+
+    {projects.length === 0 && (
+      <p class="section-desc">No projects yet.</p>
+    )}
   </div>
 </BaseLayout>

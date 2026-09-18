@@ -8,10 +8,14 @@ interface Props {
   date: Date;
   meta?: string[];
   ledger?: string;
+  video?: string;
+  repo?: string;
+  demo?: string;
 }
-const { title, description, type, date, meta = [], ledger } = Astro.props;
+const { title, description, type, date, meta = [], ledger, video, repo, demo } = Astro.props;
 
 const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
+const hasLinks = video || repo || demo;
 ---
 <BaseLayout title={`${title} — ${type}`} description={description}>
   <article class="container">
@@ -30,6 +34,14 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
       <h1 class="article-title">{title}</h1>
       <p class="article-lede">{description}</p>
     </header>
+
+    {hasLinks && (
+      <div style="display: flex; gap: 12px; margin-bottom: 40px; flex-wrap: wrap;">
+        {video && <a href={video} class="btn primary" target="_blank" rel="noopener">Watch video <span class="arrow">↗</span></a>}
+        {repo && <a href={repo} class="btn" target="_blank" rel="noopener">Repository <span class="arrow">↗</span></a>}
+        {demo && <a href={demo} class="btn" target="_blank" rel="noopener">Live demo <span class="arrow">↗</span></a>}
+      </div>
+    )}
 
     <div class="prose">
       <slot />

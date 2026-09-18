@@ -6,6 +6,12 @@ import SectionBand from '@/components/SectionBand.astro';
 const writeups = (await getCollection('writeups', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
+const categories = [...new Set(writeups.map(w => w.data.category))];
+
+const byCategory = Object.fromEntries(
+  categories.map(cat => [cat, writeups.filter(w => w.data.category === cat)])
+);
+
 const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
 ---
 <BaseLayout path="/writeups" title="Writeups — Jonas Fernandez" description="Machine walkthroughs, malware analysis, and technical deep-dives.">
@@ -14,35 +20,48 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
       num="03"
       label="Journal"
       title="Writeups & technical notes"
-      meta={`<b>${String(writeups.length).padStart(2, '0')}</b> entries<br>2024 — 2026`}
+      meta={`<b>${String(writeups.length).padStart(2, '0')}</b> entries<br>${categories.length} categories`}
     />
   </div>
 
   <div class="container section-body">
     <p class="section-desc rv">Machine walkthroughs, malware analysis, and technique deep-dives — always with a defender's eye on detection.</p>
 
-    <div class="writeups">
-      {writeups.map((w, i) => (
-        <a class="writeup rv" href={`/writeups/${w.id}`}>
-          <span class="writeup-num">{String(i + 1).padStart(2, '0')}</span>
-          <div class="writeup-meta">
-            <span class="date">{fmt(w.data.date)}</span>
-            <span class="type">{w.data.type}</span>
-          </div>
-          <div class="writeup-main">
-            <h3>{w.data.title}</h3>
-            <p>{w.data.description}</p>
-            {(w.data.difficulty || w.data.readingTime) && (
-              <div class="writeup-foot">
-                {w.data.difficulty && <span>{w.data.difficulty}</span>}
-                {w.data.difficulty && w.data.readingTime && <span class="dot">·</span>}
-                {w.data.readingTime && <span>{w.data.readingTime} min read</span>}
+    {categories.map(cat => (
+      <div class="cat-group rv">
+        <div class="cat-head">
+          <h3 class="cat-title">{cat}</h3>
+          <span class="cat-count">{byCategory[cat].length} entr{byCategory[cat].length === 1 ? 'y' : 'ies'}</span>
+        </div>
+
+        <div class="writeups">
+          {byCategory[cat].map((w, i) => (
+            <a class="writeup" href={`/writeups/${w.id}`}>
+              <span class="writeup-num">{String(i + 1).padStart(2, '0')}</span>
+              <div class="writeup-meta">
+                <span class="date">{fmt(w.data.date)}</span>
+                <span class="type">{w.data.type}</span>
               </div>
-            )}
-          </div>
-          <span class="writeup-arrow">→</span>
-        </a>
-      ))}
-    </div>
+              <div class="writeup-main">
+                <h3>{w.data.title}</h3>
+                <p>{w.data.description}</p>
+                {(w.data.difficulty || w.data.readingTime) && (
+                  <div class="writeup-foot">
+                    {w.data.difficulty && <span>{w.data.difficulty}</span>}
+                    {w.data.difficulty && w.data.readingTime && <span class="dot">·</span>}
+                    {w.data.readingTime && <span>{w.data.readingTime} min read</span>}
+                  </div>
+                )}
+              </div>
+              <span class="writeup-arrow">→</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
+
+    {writeups.length === 0 && (
+      <p class="section-desc">No writeups yet.</p>
+    )}
   </div>
 </BaseLayout>

@@ -1,6 +1,19 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
+const CATEGORIES = [
+  'Red Team',
+  'Blue Team',
+  'OSINT',
+  'Malware Analysis',
+  'Evasion',
+  'Web Security',
+  'Hardware',
+  'Social Engineering',
+  'Mobile',
+  'Infrastructure',
+] as const;
+
 const writeups = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/writeups' }),
   schema: z.object({
@@ -8,8 +21,10 @@ const writeups = defineCollection({
     description: z.string(),
     date: z.coerce.date(),
     type: z.string(),
+    category: z.enum(CATEGORIES),
     difficulty: z.string().optional(),
     readingTime: z.number().optional(),
+    video: z.string().url().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),
@@ -22,6 +37,7 @@ const projects = defineCollection({
     description: z.string(),
     date: z.coerce.date(),
     status: z.enum(['public', 'wip', 'research', 'private']).default('public'),
+    category: z.enum(CATEGORIES),
     stack: z.array(z.string()).default([]),
     repo: z.string().url().optional(),
     demo: z.string().url().optional(),
