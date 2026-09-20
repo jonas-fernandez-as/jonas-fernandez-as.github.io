@@ -33,12 +33,12 @@ export const site = {
 };
 
 export const nav = [
-  { href: '/profile',  label: 'Profile' },
-  { href: '/research', label: 'Research' },
-  { href: '/writeups', label: 'Writeups' },
-  { href: '/projects', label: 'Projects' },
-  { href: '/certs',    label: 'Certs' },
-  { href: '/reports',  label: 'Reports' },
+  { href: '/profile',     label: 'Profile' },
+  { href: '/research',    label: 'Research' },
+  { href: '/disclosures', label: 'Disclosures' },
+  { href: '/projects',    label: 'Projects' },
+  { href: '/certs',       label: 'Certs' },
+  { href: '/reports',     label: 'Reports' },
   { href: '/cheatsheets', label: 'Cheatsheets' },
-  { href: '/contact',  label: 'Contact' },
+  { href: '/contact',     label: 'Contact' },
 ];

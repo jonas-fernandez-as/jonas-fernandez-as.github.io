@@ -4,7 +4,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Ticker from '@/components/Ticker.astro';
 import { site } from '@/data/site';
 
-const writeups = (await getCollection('writeups', ({ data }) => !data.draft))
+const writeups = (await getCollection('research', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
@@ -51,7 +51,7 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
         <div class="hero-col">
           <h4>Navigate</h4>
           <div class="hero-actions">
-            <a href="/writeups" class="btn primary">Journal <span class="arrow">→</span></a>
+            <a href="/research" class="btn primary">Journal <span class="arrow">→</span></a>
             <a href={site.cv} class="btn" target="_blank" rel="noopener">CV <span class="arrow">↓</span></a>
             <a href="/contact" class="btn">Contact <span class="arrow">→</span></a>
           </div>
@@ -78,14 +78,14 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
       <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 40px; gap: 24px; flex-wrap: wrap;">
         <div>
           <span class="band-label">Journal</span>
-          <h2 class="band-title" style="font-size: 40px; margin-top: 8px;">Latest writeups</h2>
+          <h2 class="band-title" style="font-size: 40px; margin-top: 8px;">Latest research</h2>
         </div>
-        <a href="/writeups" class="btn">All writeups <span class="arrow">→</span></a>
+        <a href="/research" class="btn">All research <span class="arrow">→</span></a>
       </div>
 
-      <div class="writeups">
+      <div class="research">
         {writeups.map((w, i) => (
-          <a class="writeup rv" href={`/writeups/${w.id}`}>
+          <a class="writeup rv" href={`/research/${w.id}`}>
             <span class="writeup-num">{String(i + 1).padStart(2, '0')}</span>
             <div class="writeup-meta">
               <span class="date">{fmt(w.data.date)}</span>

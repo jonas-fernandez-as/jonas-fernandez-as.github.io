@@ -3,7 +3,7 @@ import { getCollection, render } from 'astro:content';
 import ArticleLayout from '@/layouts/ArticleLayout.astro';
 
 export async function getStaticPaths() {
-  const writeups = await getCollection('writeups');
+  const writeups = await getCollection('research');
   return writeups.map(entry => ({
     params: { slug: entry.id },
     props: { entry },
@@ -24,7 +24,7 @@ if (entry.data.readingTime) meta.push(`${entry.data.readingTime} min read`);
   date={entry.data.date}
   meta={meta}
   video={entry.data.video}
-  ledger="/writeups"
+  ledger="/research"
 >
   <Content />
 </ArticleLayout>

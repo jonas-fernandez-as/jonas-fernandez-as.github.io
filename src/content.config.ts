@@ -12,10 +12,11 @@ const CATEGORIES = [
   'Social Engineering',
   'Mobile',
   'Infrastructure',
+  'AI Security',
 ] as const;
 
-const writeups = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/writeups' }),
+const research = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/research' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -60,4 +61,4 @@ const cheatsheets = defineCollection({
   }),
 });
 
-export const collections = { writeups, projects, cheatsheets };
+export const collections = { research, projects, cheatsheets };

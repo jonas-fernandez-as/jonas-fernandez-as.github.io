@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SectionBand from '@/components/SectionBand.astro';
 
-const writeups = (await getCollection('writeups', ({ data }) => !data.draft))
+const writeups = (await getCollection('research', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const categories = [...new Set(writeups.map(w => w.data.category))];
@@ -14,12 +14,12 @@ const byCategory = Object.fromEntries(
 
 const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
 ---
-<BaseLayout path="/writeups" title="Writeups — Jonas Fernandez" description="Machine walkthroughs, malware analysis, and technical deep-dives.">
+<BaseLayout path="/research" title="Research — Jonas Fernandez" description="Machine walkthroughs, malware analysis, and technical deep-dives.">
   <div style="padding-top: 88px;">
     <SectionBand
       num="03"
       label="Journal"
-      title="Writeups & technical notes"
+      title="Research & technical notes"
       meta={`<b>${String(writeups.length).padStart(2, '0')}</b> entries<br>${categories.length} categories`}
     />
   </div>
@@ -34,9 +34,9 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
           <span class="cat-count">{byCategory[cat].length} entr{byCategory[cat].length === 1 ? 'y' : 'ies'}</span>
         </div>
 
-        <div class="writeups">
+        <div class="research">
           {byCategory[cat].map((w, i) => (
-            <a class="writeup" href={`/writeups/${w.id}`}>
+            <a class="writeup" href={`/research/${w.id}`}>
               <span class="writeup-num">{String(i + 1).padStart(2, '0')}</span>
               <div class="writeup-meta">
                 <span class="date">{fmt(w.data.date)}</span>
@@ -61,7 +61,7 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
     ))}
 
     {writeups.length === 0 && (
-      <p class="section-desc">No writeups yet.</p>
+      <p class="section-desc">No research yet.</p>
     )}
   </div>
 </BaseLayout>

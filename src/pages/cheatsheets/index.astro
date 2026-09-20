@@ -32,7 +32,7 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
         <h3 class="cheat-group-title">{cat}</h3>
         <span class="cheat-group-count">{byCategory[cat].length} sheet{byCategory[cat].length === 1 ? '' : 's'}</span>
 
-        <div class="writeups">
+        <div class="research">
           {byCategory[cat].map((c, i) => (
             <a class="writeup" href={`/cheatsheets/${c.id}`}>
               <span class="writeup-num">{String(i + 1).padStart(2, '0')}</span>
