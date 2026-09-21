@@ -82,7 +82,7 @@ The assessment followed the PTES (Penetration Testing Execution Standard) with e
 | Attribute | Value |
 |---|---|
 | **Severity** | Critical |
-| **CVSS 4.0** | 9.3 |
+| **CVSS 4.0** | 9.4 |
 | **Vector** | `CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H` |
 | **CWE** | CWE-287 (Improper Authentication), CWE-441 (Unintended Proxy) |
 | **MITRE ATT&CK** | T1649 (Steal or Forge Authentication Certificates), T1557.001 (LLMNR/NBT-NS Poisoning and SMB Relay) |
@@ -133,7 +133,7 @@ An attacker who obtains any domain credential — including a low-privileged use
 | Attribute | Value |
 |---|---|
 | **Severity** | High |
-| **CVSS 4.0** | 7.5 |
+| **CVSS 4.0** | 8.8 |
 | **Vector** | `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:L/VA:N/SC:N/SI:N/SA:N` |
 | **CWE** | CWE-284 (Improper Access Control) |
 | **MITRE ATT&CK** | T1135 (Network Share Discovery), T1039 (Data from Network Shared Drive) |
@@ -187,7 +187,7 @@ Full read access to user home directories. In this case, it exposed a plaintext 
 | Attribute | Value |
 |---|---|
 | **Severity** | High |
-| **CVSS 4.0** | 7.5 |
+| **CVSS 4.0** | 8.7 |
 | **Vector** | `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:L/SI:L/SA:N` |
 | **CWE** | CWE-256 (Plaintext Storage of a Password) |
 | **MITRE ATT&CK** | T1552.001 (Credentials In Files) |
@@ -213,8 +213,8 @@ Provided the initial domain credential that enabled the entire attack chain. Com
 
 | Attribute | Value |
 |---|---|
-| **Severity** | High |
-| **CVSS 4.0** | 7.1 |
+| **Severity** | Medium |
+| **CVSS 4.0** | 6.9 |
 | **Vector** | `CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N` |
 | **CWE** | CWE-521 (Weak Password Requirements) |
 | **MITRE ATT&CK** | T1110.003 (Password Spraying) |
@@ -247,12 +247,12 @@ An attacker who obtains the list of domain users (via NFS, LDAP enumeration, or 
 
 ---
 
-### Finding 5 — PetitPotam Coercion and NTLM Relay Chain
+### Finding 5 — PetitPotam Coercion and Kerberos Relay Chain
 
 | Attribute | Value |
 |---|---|
 | **Severity** | Critical |
-| **CVSS 4.0** | 9.3 |
+| **CVSS 4.0** | 9.4 |
 | **Vector** | `CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H` |
 | **CWE** | CWE-441 (Unintended Proxy or Intermediary) |
 | **MITRE ATT&CK** | T1557 (Adversary-in-the-Middle), T1649 (Steal or Forge Authentication Certificates) |
