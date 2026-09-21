@@ -1,6 +1,6 @@
 ---
-title: "ESC8, PetitPotam and the Magic DNS — Chaining NTLM Relay to AD CS"
-description: "How to escalate from any domain credential to Domain Admin by coercing the DC to authenticate, relaying that authentication to Active Directory Certificate Services, and extracting a certificate for the machine account. A deep dive into the AD CS misconfiguration that requires no template abuse."
+title: "ESC8, PetitPotam and the Magic DNS — Chaining Kerberos Relay to AD CS"
+description: "How to escalate from any domain credential to Domain Admin by coercing the DC to authenticate, relaying that authentication to Active Directory Certificate Services, and extracting a certificate for the machine account. A deep dive into the AD CS misconfiguration that requires no template abuse — and the Kerberos relay technique that bypasses a domain-wide NTLM block."
 date: 2026-09-21
 type: "Technique · Active Directory"
 category: "Red Team"
@@ -15,7 +15,9 @@ Active Directory Certificate Services (AD CS) is one of the most under-defended 
 
 ESC8 is the most dangerous of the eight escalation paths documented in the Certified Pre-Owned whitepaper, not because it is technically complex, but because it does not depend on any certificate template misconfiguration. It abuses the web enrollment endpoint itself — a component that is present on most AD CS deployments and that is exposed by default.
 
-The technique works like this: coerce a high-value target (a Domain Controller, a Certificate Authority, an Exchange server) into authenticating to an attacker-controlled host, relay that authentication to the AD CS web enrollment endpoint, and request a certificate on behalf of the coerced account. If the target is a Domain Controller, the resulting certificate grants the ability to perform DCSync and extract every credential in the domain.
+The classic technique works like this: coerce a high-value target (a Domain Controller, a Certificate Authority, an Exchange server) into authenticating to an attacker-controlled host, relay that authentication to the AD CS web enrollment endpoint, and request a certificate on behalf of the coerced account. If the target is a Domain Controller, the resulting certificate grants the ability to perform DCSync and extract every credential in the domain.
+
+The technique in this article is the Kerberos variant. The environment had NTLM disabled domain-wide — a common hardening step that blocks the classic NTLM relay. But disabling NTLM does not disable Kerberos relay, and AD CS accepts Kerberos authentication by default. The result is the same: a certificate for the machine account, and a path to Domain Admin.
 
 This article covers the mechanism behind the chain. It assumes familiarity with NTLM authentication, Kerberos, and Active Directory basics. For the full engagement that used this technique end to end, see the [VulnCicada report →](/projects/vulncicada-ad-compromise).
 
@@ -29,34 +31,33 @@ The endpoint exposes a set of ASP pages (`certfnsh.asp`, `certcrs.asp`, `certnew
 
 The certificate template used for enrollment determines what the resulting certificate can do. The most damaging choice is the `DomainController` template — a default template available on virtually every AD CS installation — which produces a certificate that authenticates as the Domain Controller machine account.
 
-## Part two — why NTLM authentication on a web endpoint is dangerous
+## Part two — why Kerberos relay works when NTLM is disabled
 
-The web enrollment endpoint uses IIS's authentication stack. When configured with Windows Authentication (NTLM), the endpoint authenticates the requester based on the NTLM challenge-response exchange. This is the same primitive that SMB uses, but running over HTTP.
+The classic ESC8 attack uses NTLM relay. The attacker coerces the DC into authenticating via NTLM, forwards the NTLM challenge-response to the AD CS web enrollment endpoint, and the endpoint authenticates the request as the DC. This works because NTLM relay does not require the attacker to know the password — only to forward a valid challenge-response.
 
-NTLM relay exploits this by separating the two halves of the exchange:
+When NTLM is disabled domain-wide, the classic attack is no longer possible. The coerced DC will not generate an NTLM response, because the domain policy tells it not to. This is where most defenders stop thinking about ESC8: "NTLM is disabled, so relay attacks don't work."
 
-1. **The challenge** — the server (in this case, the coerced DC) sends an NTLM challenge to whoever is authenticating.
-2. **The response** — the client (the attacker, in the relay scenario) forwards a valid response.
+That assumption is wrong. Kerberos relay is a separate primitive, and disabling NTLM does not disable it.
 
-The attacker never learns the password. The endpoint never knows the request came from a different source. The security boundary that NTLM relay breaks is the assumption that the challenge and the response come from the same network context. In practice, that assumption has never been true on a network where an attacker can position themselves between the two — which is the entire premise of a relay attack.
+Kerberos relay works differently. Instead of relaying an NTLM challenge-response, the attacker relays a Kerberos AP-REQ (Authentication Service Request) — the ticket that a client presents when authenticating to a service. The attacker coerces the DC into authenticating to an attacker-controlled host via SMB, using a Kerberos ticket. The relay server receives the AP-REQ, and forwards it to the AD CS endpoint. If the endpoint accepts Kerberos authentication (it does by default), the relay succeeds.
 
-The reason AD CS is such a rich target for this is that the resulting authentication can be turned into a certificate, and the certificate can be turned into a Kerberos ticket. Every step in that chain is a legitimate AD mechanism. There is no signature that says "this certificate was obtained via relay" — the CA issues it as a normal enrollment.
+The reason this works is that the AD CS web enrollment endpoint does not enforce channel binding on Kerberos authentication. Channel binding is a mechanism that ties an authentication to the specific TLS channel it was performed over — if the channel changes, the authentication fails. Without channel binding, the endpoint accepts the relayed AP-REQ as if it came from the original client.
 
-## Part three — why Kerberos does not protect you here
+The Kerberos relay primitive is implemented in tools like `krbrelayx` (by Dirk-jan Mollema) and `certipy-ad relay`. The technique exploits how SPN construction and parsing work in Kerberos, combined with the ability to coerce authentication from a high-value target. For the full history and mechanics, the original research on relaying Kerberos is worth reading in full.
 
-A common defensive posture is to disable NTLM authentication for SMB. This is good practice. It eliminates a large class of attacks: SMB relay, Pass-the-Hash over SMB, and various protocol downgrade techniques. The domain in the engagement behind this article has NTLM disabled for SMB — the authentication is Kerberos-only, and SMB signing is enabled and required.
+## Part three — why disabling NTLM is not enough
+
+Disabling NTLM domain-wide is a strong hardening step. It eliminates a large class of attacks: NTLM relay, Pass-the-Hash, and various protocol downgrade techniques. The domain in the engagement behind this article has NTLM disabled for all inbound authentication — SMB, LDAP, and HTTP — and all tool invocations require Kerberos.
 
 None of that stops this attack.
 
-Three reasons:
+Two reasons:
 
 **1. Kerberos password spraying is unaffected.** The attacker sprays Kerberos AS-REQ messages at the KDC (port 88). The KDC validates them independently of NTLM settings. If a password is weak, the spray succeeds, and the attacker obtains a valid TGT — the entire foothold — without touching NTLM at all.
 
-**2. NTLM on non-SMB protocols is unaffected.** The AD CS web enrollment endpoint accepts NTLM as an HTTP authentication method. Disabling NTLM for SMB does not disable it for IIS or for any other service. The endpoint does not care that SMB is Kerberos-only; it only cares that the request presents a valid NTLM challenge-response.
+**2. Kerberos relay is a separate primitive.** The AD CS web enrollment endpoint accepts Kerberos authentication by default. It does not enforce channel binding on Kerberos, which means an attacker who can capture a Kerberos AP-REQ from a high-value target can relay it to the endpoint and authenticate as that target. Disabling NTLM does not disable Kerberos relay; it only changes which primitive the attacker has to use.
 
-**3. Coercion triggers authentication regardless of NTLM policy.** PetitPotam calls the MS-EFSRPC interface (`EfsRpcOpenFileRaw`) on a target. The target authenticates to the UNC path supplied by the attacker. The authentication method (NTLM or Kerberos) depends on what the target attempts and what the attacker's listener accepts. If the target falls back to NTLM — which it does in default configurations — the relay succeeds.
-
-The lesson is that a defense implemented at one layer is not a defense at another. Disabling NTLM for SMB is a filter. Disabling NTLM everywhere — including IIS, LDAP, and any other service that accepts it — is a defense. Very few organizations do the latter.
+The lesson is that a defense implemented against one primitive is not a defense against a different primitive that achieves the same result. NTLM relay and Kerberos relay are different attacks, and blocking one does not block the other. The only complete defense is to enforce channel binding on the AD CS endpoint — which ties the authentication to the TLS channel and prevents both forms of relay.
 
 ## Part four — the Magic DNS trick
 
@@ -130,8 +131,8 @@ A SOC monitoring this environment should look for the following signals. None of
 
 **On the network:**
 
-- **NTLM authentication over HTTP** — if the environment has a network sensor, this is a high-signal pattern. Legitimate NTLM over HTTP is rare outside of internal IIS applications.
-- **certipy-ad relay signatures** — the tool sends a specific POST request structure to the CA. Network monitoring for the specific path and payload format catches the relay in progress.
+- **Kerberos authentication over SMB from the DC to a non-DC host** — a DC authenticating to a workstation via SMB is anomalous. Combined with a relay listener on the attacker side, this is the canonical signal of a Kerberos relay attack.
+- **certipy-ad relay signatures** — the tool listens for incoming SMB authentication and forwards it to the CA via HTTP POST to `/certsrv/certfnsh.asp`. Network monitoring for this pattern, especially from an unexpected source, catches the relay.
 
 ## Part seven — remediation
 
@@ -143,7 +144,7 @@ This is the direct fix. It eliminates the entire chain.
 
 - **Disable HTTP web enrollment entirely** if it is not required. This is the cleanest fix; there is no reason to expose the enrollment endpoint over HTTP.
 - **If web enrollment is required, enforce HTTPS-only** and configure the CA to reject HTTP requests.
-- **Enforce Extended Protection for Authentication (EPA)** on the IIS-hosted AD CS web enrollment endpoint. EPA binds the authentication to the TLS channel, which prevents relay. This is the direct mitigation for NTLM relay attacks and is a standard IIS configuration.
+- **Enforce Extended Protection for Authentication (EPA)** on the IIS-hosted AD CS web enrollment endpoint. EPA binds the authentication to the TLS channel, which prevents both NTLM and Kerberos relay. This is the direct mitigation for the entire class of relay attacks and is a standard IIS configuration.
 - **Require HTTPS with certificate mapping (Kerberos-only enrollment).** This forces channel binding and prevents relay entirely.
 
 **Layer 2 — Reduce the surface.**
