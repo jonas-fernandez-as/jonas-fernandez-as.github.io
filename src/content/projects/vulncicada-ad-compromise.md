@@ -409,54 +409,13 @@ The following diagram shows the complete attack path from unauthenticated networ
 
 ---
 
-## Technical Deep Dive — ESC8 and Kerberos Coercion
+## Technical Deep Dive
 
-### What ESC8 Actually Is
+For a full technical deep dive into the ESC8 misconfiguration, Kerberos coercion via PetitPotam, and the Magic DNS technique used in this engagement, see the dedicated research article:
 
-ESC8 is one of the eight AD CS escalation paths documented in the Certified Pre-Owned whitepaper (2021). It is distinct from the template-based variants (ESC1-ESC7) in a fundamental way: ESC8 does not depend on any certificate template misconfiguration.
+**[ESC8, PetitPotam and the Magic DNS — Chaining NTLM Relay to AD CS →](/research/esc8-kerberos-coercion)**
 
-Instead, ESC8 abuses the **web enrollment endpoint** of an AD CS server. The endpoint, hosted on IIS, accepts certificate enrollment requests over HTTP or HTTPS. If it is exposed over HTTP and accepts NTLM authentication, an attacker can relay a coerced NTLM authentication to it and request a certificate on behalf of the coerced account.
-
-The template used for enrollment determines what the resulting certificate can do. In this case, the attacker used the `DomainController` template — a default template available on virtually every AD CS installation — which produces a certificate that authenticates as the Domain Controller machine account.
-
-### Why NTLM Authentication on a Web Endpoint Is Dangerous
-
-The web enrollment endpoint uses IIS's authentication stack. When configured with Windows Authentication (NTLM), the endpoint authenticates the requester based on the NTLM challenge-response exchange. If the attacker can capture a legitimate NTLM challenge-response from a high-value target — like the DC — they can forward it to the endpoint and the endpoint will authenticate the request as that target.
-
-This is NTLM relay. The attacker never learns the password; the endpoint never knows the request came from a different source. The security boundary that NTLM relay breaks is the assumption that the challenge and the response come from the same network context.
-
-### Why Kerberos Does Not Protect You Here
-
-The domain in this engagement has NTLM disabled for SMB authentication. This is a strong security posture that eliminates a large class of attacks (SMB relay, Pass-the-Hash over SMB). However, it does not protect against:
-
-1. **Kerberos password spraying** — the attacker sprays Kerberos AS-REQ (Authentication Service Request) messages at the KDC. The KDC validates them independently of NTLM settings. Kerberos password spraying against port 88 works regardless of the SMB authentication configuration.
-
-2. **NTLM authentication on non-SMB protocols** — the AD CS web enrollment endpoint accepts NTLM as an HTTP authentication method. Disabling NTLM for SMB does not disable it for IIS or any other service.
-
-3. **Kerberos coercion via PetitPotam** — the coercion itself works over MS-EFSRPC and returns a Kerberos or NTLM challenge. If NTLM is available anywhere in the environment (and it is, on the AD CS endpoint), the relay can succeed.
-
-### The "Magic DNS" Trick
-
-The malicious DNS record used in this attack is not arbitrary. The name `DC-JPQ2251UWhRCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYBAAAA` encodes a specific structure:
-
-- `DC-JPQ225` — a plausible prefix matching the DC hostname (for camouflage)
-- `1UWhRCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYBAAAA` — a base64-encoded suffix that contains a `CREDENTIAL_TARGET_INFORMATION` structure
-
-The `CREDENTIAL_TARGET_INFORMATION` is a Kerberos data structure that tells the client which SPN to request a ticket for when authenticating. By embedding this structure in the DNS name, the attacker causes the coerced DC to request a Kerberos ticket for `HTTP/DC-JPQ225.cicada.vl` (the AD CS web enrollment SPN) — which is exactly what the attacker needs to relay to the enrollment endpoint.
-
-Without the embedded structure, the DC would authenticate using the DNS name itself as the SPN, which would not match the AD CS service, and the relay would fail.
-
-### Detection Signals
-
-A SOC monitoring this environment should look for:
-
-1. **Event ID 4886 / 4887 on the CA** — certificate issuance events. If a certificate is issued for `dc-jpq225$` outside a maintenance window, it is a strong indicator.
-2. **Event ID 4624 on the CA** — logon type 3 (network) with the DC's computer account as the subject and the CA's web enrollment service as the target.
-3. **DNS record creation for a name with suspicious suffix** — the `1UWhRCAAAAAA...` pattern is distinctive. A DNS monitoring rule matching the pattern catches every variant.
-4. **PetitPotam-style MS-EFSRPC calls** — Event ID 4648 (explicit credential logon) from a DC to an anomalous target, or Sysmon Event ID 1 for `efsrpc` calls.
-5. **certipy-ad relay activity** — the tool sends an HTTP POST to `/certsrv/certfnsh.asp`. Network monitoring for this path, especially from unexpected sources, catches the relay in progress.
-
----
+The article explains the mechanism behind the chain — why AD CS web enrollment over HTTP is dangerous, why disabling NTLM for SMB does not protect the domain, and how the `CREDENTIAL_TARGET_INFORMATION` structure embedded in a DNS name coerces the DC into authenticating to an attacker-controlled service.
 
 ## Recommendations Summary
 
