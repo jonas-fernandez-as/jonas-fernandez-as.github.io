@@ -5,7 +5,7 @@ date: 2026-01-15
 status: "public"
 category: "Hardware"
 stack: [CircuitPython, Raspberry Pi Pico, USB HID, Python, Ducky Script]
-repo: "https://github.com/jonas-fernandez-as/BadUsb"
+repo: "https://github.com/jonastrikex/BadUsb"
 video: "https://youtu.be/EDICD2nYuo8"
 tags: [badusb, hardware, usb-hid, physical-access, rubber-ducky, circuitpython]
 ---

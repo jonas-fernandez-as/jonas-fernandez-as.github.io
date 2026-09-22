@@ -9,8 +9,8 @@ export const site = {
   year: 2026,
   email: 'contact@jonastrikex.com',
   socials: {
-    linkedin: { label: 'LinkedIn', value: 'jonás-fernández-as', url: 'https://www.linkedin.com/in/jonás-fernández-as' },
-    github:   { label: 'GitHub',   value: 'jonas-fernandez-as', url: 'https://github.com/jonas-fernandez-as' },
+    linkedin: { label: 'LinkedIn', value: 'jonastrikex', url: 'https://www.linkedin.com/in/jonastrikex' },
+    github:   { label: 'GitHub',   value: 'jonastrikex', url: 'https://github.com/jonastrikex' },
     youtube:  { label: 'YouTube',  value: '@JonaStrikeX',       url: 'https://www.youtube.com/@JonaStrikeX' },
     email:    { label: 'Email',    value: 'contact@jonastrikex.com', url: 'mailto:contact@jonastrikex.com' },
   },

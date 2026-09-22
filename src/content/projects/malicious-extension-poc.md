@@ -5,7 +5,7 @@ date: 2025-12-19
 status: "research"
 category: "Social Engineering"
 stack: [Python, Flask, JavaScript, Chrome MV3, Firefox MV2, HTML/CSS]
-repo: "https://github.com/jonas-fernandez-as/malicious-extension-poc"
+repo: "https://github.com/jonastrikex/malicious-extension-poc"
 video: "https://youtu.be/LyeTdyoM4MQ"
 tags: [session-hijacking, browser-extension, cookies, phishing, httponly]
 ---

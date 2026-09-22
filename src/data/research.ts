@@ -23,7 +23,7 @@ export const research: ResearchEntry[] = [
     body: 'Vulnerability in the Media Manager of TastyIgniter allowing Stored XSS. Coordinated and published via official INCIBE advisory, with a dedicated public PoC repository.',
     links: [
       { label: 'Advisory ↗', url: 'https://www.incibe.es/incibe-cert/alerta-temprana/avisos/cross-site-scripting-xss-almacenado-en-media-manager-de-tastyigniter' },
-      { label: 'PoC ↗', url: 'https://github.com/jonas-fernandez-as/CVE-2026-14856-TastyIgniter' },
+      { label: 'PoC ↗', url: 'https://github.com/jonastrikex/CVE-2026-14856-TastyIgniter' },
     ],
     notes: ['Published via INCIBE'],
   },

@@ -5,7 +5,7 @@ date: 2025-12-19
 status: "research"
 category: "Malware Analysis"
 stack: [C, OpenSSL, libcurl, Linux, Cryptography]
-repo: "https://github.com/jonas-fernandez-as/simple-ransomware-poc"
+repo: "https://github.com/jonastrikex/simple-ransomware-poc"
 video: "https://youtu.be/JU9z9T79F5k"
 ---
 
